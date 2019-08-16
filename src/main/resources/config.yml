@@ -1,0 +1,9 @@
+# UnexpectedSpawn
+# https://github.com/Shivelight/unexpectedspawn-paper
+x-max: 399
+x-min: -399
+z-max: 399
+z-min: -399
+bed-respawn-enabled: true
+first-join-only: false
+on-join: false

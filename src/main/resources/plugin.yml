@@ -1,0 +1,15 @@
+name: UnexpectedSpawn
+version: ${project.version}
+main: id.shivelight.paper.unexpectedspawn.UnexpectedSpawn
+api-version: 1.13
+authors: [Shivelight]
+description: Randomize player spawn point.
+website: https://shivelight.id
+commands:
+  unexpectedspawn:
+    usage: /<command> reload
+    description: Reload UnexpectedSpawn.
+permissions:
+  unexpectedspawn.use:
+    description: Use UnexpectedSpawn command.
+    default: op
