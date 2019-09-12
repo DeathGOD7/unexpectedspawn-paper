@@ -65,7 +65,7 @@ public class Spawn implements Listener {
                 UUID id = event.getPlayer().getUniqueId();
                 if (event.getPlayer().hasPlayedBefore())
                 {
-                    File file = new File("plugins\\UnexpectedSpawn" + id.toString() + ".yml");
+                    File file = new File("plugins\\UnexpectedSpawn\\" + id.toString() + ".yml");
                     if (file.exists())
                     {
                         Yaml store = new Yaml();
@@ -78,7 +78,7 @@ public class Spawn implements Listener {
                 {
                     Location joinLocation = getRandomSpawnLocation(joinWorld);
                     Yaml store = new Yaml();
-                    File file = new File("plugins\\UnexpectedSpawn" + id.toString() + ".yml");
+                    File file = new File("plugins\\UnexpectedSpawn\\" + id.toString() + ".yml");
                     if (!file.exists())
                     {
                         file.createNewFile();
