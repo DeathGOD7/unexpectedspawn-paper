@@ -20,6 +20,9 @@
 
 package id.shivelight.paper.unexpectedspawn;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -29,6 +32,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import java.util.Random;
+import java.util.UUID;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.nodes.Tag;
 
 public class Spawn implements Listener {
 
@@ -39,21 +46,54 @@ public class Spawn implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        World joinWorld = event.getPlayer().getWorld();
-        if (joinWorld.getEnvironment().equals(World.Environment.NETHER)
-                || joinWorld.getEnvironment().equals(World.Environment.THE_END)) {
-            return;
-        }
-        if (plugin.config.getConfig().getBoolean("on-join"))
+    public void onJoin(PlayerJoinEvent event)
+    {
+        try
         {
-            Location joinLocation = getRandomSpawnLocation(joinWorld);
-            event.getPlayer().teleport(joinLocation);
+            World joinWorld = event.getPlayer().getWorld();
+            if (joinWorld.getEnvironment().equals(World.Environment.NETHER)
+                || joinWorld.getEnvironment().equals(World.Environment.THE_END)) {
+                return;
+            }
+            if (plugin.config.getConfig().getBoolean("on-join"))
+            {
+                Location joinLocation = getRandomSpawnLocation(joinWorld);
+                event.getPlayer().teleport(joinLocation);
+            }
+            else
+            {
+                UUID id = event.getPlayer().getUniqueId();
+                if (event.getPlayer().hasPlayedBefore())
+                {
+                    File file = new File("plugins\\UnexpectedSpawn" + id.toString() + ".yml");
+                    if (file.exists())
+                    {
+                        Yaml store = new Yaml();
+                        FileInputStream stream = new FileInputStream(file);
+                        Location joinLocation = store.load(stream);
+                        event.getPlayer().setMetadata("UnexceptedSpawn.SpawnLocation", new org.bukkit.metadata.FixedMetadataValue(plugin, joinLocation));
+                    }
+                }
+                else if (plugin.config.getConfig().getBoolean("first-join-only"))
+                {
+                    Location joinLocation = getRandomSpawnLocation(joinWorld);
+                    Yaml store = new Yaml();
+                    File file = new File("plugins\\UnexpectedSpawn" + id.toString() + ".yml");
+                    if (!file.exists())
+                    {
+                        file.createNewFile();
+                    }
+                    FileOutputStream stream = new FileOutputStream(file);
+                    stream.write(store.dump(joinLocation).getBytes());
+                    stream.close();
+                    event.getPlayer().setMetadata("UnexceptedSpawn.SpawnLocation", new org.bukkit.metadata.FixedMetadataValue(plugin, joinLocation));
+                    event.getPlayer().teleport(joinLocation);
+                }
+            }
         }
-        else if ((!event.getPlayer().hasPlayedBefore() && plugin.config.getConfig().getBoolean("first-join-only"))) {
-            Location joinLocation = getRandomSpawnLocation(joinWorld);
-            event.getPlayer().setMetadata("UnexceptedSpawn.SpawnLocation", new org.bukkit.metadata.FixedMetadataValue(plugin, joinLocation));
-            event.getPlayer().teleport(joinLocation);
+        catch (Exception ex)
+        {
+            
         }
     }
 
