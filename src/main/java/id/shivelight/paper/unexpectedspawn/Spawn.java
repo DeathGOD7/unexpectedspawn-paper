@@ -20,6 +20,7 @@
 
 package id.shivelight.paper.unexpectedspawn;
 
+import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -44,9 +45,14 @@ public class Spawn implements Listener {
                 || joinWorld.getEnvironment().equals(World.Environment.THE_END)) {
             return;
         }
-        if ((!event.getPlayer().hasPlayedBefore() && plugin.config.getConfig().getBoolean("first-join-only"))
-                || plugin.config.getConfig().getBoolean("on-join")) {
+        if (plugin.config.getConfig().getBoolean("on-join"))
+        {
             Location joinLocation = getRandomSpawnLocation(joinWorld);
+            event.getPlayer().teleport(joinLocation);
+        }
+        else if ((!event.getPlayer().hasPlayedBefore() && plugin.config.getConfig().getBoolean("first-join-only"))) {
+            Location joinLocation = getRandomSpawnLocation(joinWorld);
+            event.getPlayer().setMetadata("UnexceptedSpawn.SpawnLocation", new org.bukkit.metadata.FixedMetadataValue(plugin, joinLocation));
             event.getPlayer().teleport(joinLocation);
         }
     }
@@ -55,8 +61,20 @@ public class Spawn implements Listener {
     public void onRespawn(PlayerRespawnEvent event) {
         if (!event.isBedSpawn() || !plugin.config.getConfig().getBoolean("bed-respawn-enabled")) {
             World respawnWorld = event.getRespawnLocation().getWorld();
-            Location respawnLocation = getRandomSpawnLocation(respawnWorld);
-            event.setRespawnLocation(respawnLocation);
+            if (plugin.config.getConfig().getBoolean("first-join-only"))
+            {
+                List<org.bukkit.metadata.MetadataValue> values = event.getPlayer().getMetadata("UnexceptedSpawn.SpawnLocation");
+                if (values.size() > 0)
+                {
+                    Location respawnLocation = (Location)values.get(0).value();
+                    event.setRespawnLocation(respawnLocation);
+                }
+            }
+            else
+            {
+                Location respawnLocation = getRandomSpawnLocation(respawnWorld);
+                event.setRespawnLocation(respawnLocation);
+            }
         }
     }
 
