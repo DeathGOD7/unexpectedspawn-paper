@@ -46,53 +46,46 @@ public class Spawn implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event)
-    {
-        try
-        {
+    public void onJoin(PlayerJoinEvent event){
+        try{
             World joinWorld = event.getPlayer().getWorld();
             if (joinWorld.getEnvironment().equals(World.Environment.NETHER)
                 || joinWorld.getEnvironment().equals(World.Environment.THE_END)) {
                 return;
             }
-            if (plugin.config.getConfig().getBoolean("on-join"))
-            {
+            if (plugin.config.getConfig().getBoolean("on-join")){
                 Location joinLocation = getRandomSpawnLocation(joinWorld);
                 event.getPlayer().teleport(joinLocation);
             }
-            else
-            {
+            else{
                 UUID id = event.getPlayer().getUniqueId();
-                if (event.getPlayer().hasPlayedBefore())
-                {
+                if (event.getPlayer().hasPlayedBefore()){
                     File file = new File("plugins\\UnexpectedSpawn\\" + id.toString() + ".yml");
-                    if (file.exists())
-                    {
+                    if (file.exists()){
                         Yaml store = new Yaml();
                         FileInputStream stream = new FileInputStream(file);
                         Location joinLocation = store.load(stream);
+                        event.getPlayer().removeMetadata("UnexceptedSpawn.SpawnLocation", plugin);
                         event.getPlayer().setMetadata("UnexceptedSpawn.SpawnLocation", new org.bukkit.metadata.FixedMetadataValue(plugin, joinLocation));
                     }
                 }
-                else if (plugin.config.getConfig().getBoolean("first-join-only"))
-                {
+                else if (plugin.config.getConfig().getBoolean("first-join-only")){
                     Location joinLocation = getRandomSpawnLocation(joinWorld);
                     Yaml store = new Yaml();
                     File file = new File("plugins\\UnexpectedSpawn\\" + id.toString() + ".yml");
-                    if (!file.exists())
-                    {
+                    if (!file.exists()){
                         file.createNewFile();
                     }
                     FileOutputStream stream = new FileOutputStream(file);
                     stream.write(store.dump(joinLocation).getBytes());
                     stream.close();
+                    event.getPlayer().removeMetadata("UnexceptedSpawn.SpawnLocation", plugin);
                     event.getPlayer().setMetadata("UnexceptedSpawn.SpawnLocation", new org.bukkit.metadata.FixedMetadataValue(plugin, joinLocation));
                     event.getPlayer().teleport(joinLocation);
                 }
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex){
             
         }
     }
@@ -101,17 +94,14 @@ public class Spawn implements Listener {
     public void onRespawn(PlayerRespawnEvent event) {
         if (!event.isBedSpawn() || !plugin.config.getConfig().getBoolean("bed-respawn-enabled")) {
             World respawnWorld = event.getRespawnLocation().getWorld();
-            if (plugin.config.getConfig().getBoolean("first-join-only"))
-            {
+            if (plugin.config.getConfig().getBoolean("first-join-only")){
                 List<org.bukkit.metadata.MetadataValue> values = event.getPlayer().getMetadata("UnexceptedSpawn.SpawnLocation");
-                if (values.size() > 0)
-                {
+                if (values.size() > 0){
                     Location respawnLocation = (Location)values.get(0).value();
                     event.setRespawnLocation(respawnLocation);
                 }
             }
-            else
-            {
+            else{
                 Location respawnLocation = getRandomSpawnLocation(respawnWorld);
                 event.setRespawnLocation(respawnLocation);
             }
@@ -130,5 +120,4 @@ public class Spawn implements Listener {
         int y = world.getHighestBlockYAt(x, z) + 1;
         return new Location(world, (double) x, (double) y, (double) z);
     }
-
 }
