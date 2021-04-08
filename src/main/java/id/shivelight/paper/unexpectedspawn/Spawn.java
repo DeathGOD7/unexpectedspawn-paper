@@ -60,20 +60,17 @@ public class Spawn implements Listener {
         }
     }
 
-    private Location getRandomSpawnLocation(World world) 
-        {	
-        int xmin = plugin.config.getConfig().getInt("x-min");
-        int xmax = plugin.config.getConfig().getInt("x-max");
-        int zmin = plugin.config.getConfig().getInt("z-min");
-        int zmax = plugin.config.getConfig().getInt("z-max");
-        while (true)
-        {
+    private Location getRandomSpawnLocation(World world) {	
+         int xmin = plugin.config.getConfig().getInt("x-min");
+         int xmax = plugin.config.getConfig().getInt("x-max");
+         int zmin = plugin.config.getConfig().getInt("z-min");
+         int zmax = plugin.config.getConfig().getInt("z-max");
+      while (true){
             int x = xmin + ThreadLocalRandom.current().nextInt((xmax - xmin) + 1);
             int z = zmin + ThreadLocalRandom.current().nextInt((zmax - zmin) + 1);
             int y = world.getHighestBlockYAt(x, z) + 1;
             int b = world.getHighestBlockYAt(x, z);
-        	if((new Location(world, (double) x, (double) b, (double) z).getBlock().getType() != Material.LAVA))
-        {
+        	if((new Location(world, (double) x, (double) b, (double) z).getBlock().getType() != Material.LAVA)){
         		return new Location(world, (double) x, (double) y, (double) z);
         	}
         } 
