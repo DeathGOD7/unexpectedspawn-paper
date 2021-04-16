@@ -1,5 +1,5 @@
 /*
- * This file is part of UnexpectedSpawn 
+ * This file is part of UnexpectedSpawn
  * (see https://github.com/Shivelight/unexpectedspawn-paper).
  *
  * Copyright (c) 2019 Shivelight.
@@ -21,20 +21,33 @@
 package id.shivelight.paper.unexpectedspawn;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Spawn implements Listener {
 
-    private UnexpectedSpawn plugin;
+    private final UnexpectedSpawn plugin;
+    private final HashSet<Material> blacklistedMaterial = new HashSet<>();
 
     Spawn(UnexpectedSpawn plugin) {
         this.plugin = plugin;
+        List<String> materialList = plugin.config.getConfig().getStringList("spawn-block-blacklist");
+        for (String name : materialList) {
+            Material material = Material.getMaterial(name);
+            if (material == null) {
+                plugin.getServer().getLogger().warning("Material " + name + " is not valid. See https://papermc.io/javadocs/paper/org/bukkit/Material.html");
+                continue;
+            }
+            blacklistedMaterial.add(material);
+        }
     }
 
     @EventHandler
@@ -60,19 +73,22 @@ public class Spawn implements Listener {
         }
     }
 
-    private Location getRandomSpawnLocation(World world) {	
-         int xmin = plugin.config.getConfig().getInt("x-min");
-         int xmax = plugin.config.getConfig().getInt("x-max");
-         int zmin = plugin.config.getConfig().getInt("z-min");
-         int zmax = plugin.config.getConfig().getInt("z-max");
-      while (true){
+    private Location getRandomSpawnLocation(World world) {
+        int xmin = plugin.config.getConfig().getInt("x-min");
+        int xmax = plugin.config.getConfig().getInt("x-max");
+        int zmin = plugin.config.getConfig().getInt("z-min");
+        int zmax = plugin.config.getConfig().getInt("z-max");
+        while (true) {
             int x = xmin + ThreadLocalRandom.current().nextInt((xmax - xmin) + 1);
             int z = zmin + ThreadLocalRandom.current().nextInt((zmax - zmin) + 1);
-            int y = world.getHighestBlockYAt(x, z) + 1;
-            int b = world.getHighestBlockYAt(x, z);
-        	if((new Location(world, (double) x, (double) b, (double) z).getBlock().getType() != Material.LAVA)){
-        		return new Location(world, (double) x, (double) y, (double) z);
-        	}
-        } 
+            int y = world.getHighestBlockYAt(x, z);
+
+            Location location = new Location(world, x, y, z);
+            if (blacklistedMaterial.contains(location.getBlock().getType())) {
+                continue;
+            }
+
+            return location.add(0.5d, 1d, 0.5d);
+        }
     }
 }

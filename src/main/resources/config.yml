@@ -7,3 +7,11 @@ z-min: -399
 bed-respawn-enabled: true
 first-join-only: false
 on-join: false
+spawn-block-blacklist:
+  - LAVA
+  - WATER
+  - CACTUS
+  - FIRE
+  - MAGMA_BLOCK
+  - SWEET_BERRY_BUSH
+  - CAMPFIRE
