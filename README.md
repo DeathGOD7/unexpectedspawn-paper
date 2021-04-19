@@ -38,4 +38,15 @@ first-join-only: false
 
 # boolean : randomize everytime player join.
 on-join: false
+
+# list of string : spawn block blaklist, player won't spawn
+# on blacklisted block.
+spawn-block-blacklist:
+  - LAVA
+  - WATER
+  - CACTUS
+  - FIRE
+  - MAGMA_BLOCK
+  - SWEET_BERRY_BUSH
+  - CAMPFIRE
 ```
