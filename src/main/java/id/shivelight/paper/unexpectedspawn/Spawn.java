@@ -84,6 +84,13 @@ public class Spawn implements Listener {
             int y = world.getHighestBlockYAt(x, z);
 
             Location location = new Location(world, x, y, z);
+
+            // Special case for server version <1.15.2 (?)
+            // Related: https://www.spigotmc.org/threads/gethighestblockat-returns-air.434090/
+            if (location.getBlock().getType() == Material.AIR) {
+                location = location.subtract(0, 1, 0);
+            }
+
             if (blacklistedMaterial.contains(location.getBlock().getType())) {
                 continue;
             }
