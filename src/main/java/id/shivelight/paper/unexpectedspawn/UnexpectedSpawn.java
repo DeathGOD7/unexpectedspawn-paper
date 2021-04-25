@@ -1,5 +1,5 @@
 /*
- * This file is part of UnexpectedSpawn 
+ * This file is part of UnexpectedSpawn
  * (see https://github.com/Shivelight/unexpectedspawn-paper).
  *
  * Copyright (c) 2019 Shivelight.
