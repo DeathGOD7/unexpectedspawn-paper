@@ -20,6 +20,7 @@
 
 package id.shivelight.paper.unexpectedspawn;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -43,7 +44,7 @@ public class Spawn implements Listener {
         for (String name : materialList) {
             Material material = Material.getMaterial(name);
             if (material == null) {
-                plugin.getServer().getLogger().warning("Material " + name + " is not valid. See https://papermc.io/javadocs/paper/org/bukkit/Material.html");
+                Bukkit.getLogger().warning("Material " + name + " is not valid. See https://papermc.io/javadocs/paper/org/bukkit/Material.html");
                 continue;
             }
             blacklistedMaterial.add(material);
@@ -66,6 +67,10 @@ public class Spawn implements Listener {
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
+        if (ApiUtil.isAvailable(PlayerRespawnEvent.class, "isAnchorSpawn") && event.isAnchorSpawn()) {
+            return;
+        }
+
         if (!event.isBedSpawn() || !plugin.config.getConfig().getBoolean("bed-respawn-enabled")) {
             World respawnWorld = event.getRespawnLocation().getWorld();
             Location respawnLocation = getRandomSpawnLocation(respawnWorld);
