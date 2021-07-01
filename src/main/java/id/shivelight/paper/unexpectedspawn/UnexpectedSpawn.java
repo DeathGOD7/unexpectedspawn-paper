@@ -28,9 +28,11 @@ public final class UnexpectedSpawn extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        config = new ConfigAccessor(this, "config.yml");
-        config.getConfig().options().copyDefaults(true);
-        config.saveConfig();
+        this.config = new ConfigAccessor(this, "config.yml");
+        this.config.getConfig().options().copyDefaults(true);
+//        config.saveConfig();
+//        used this so the comment in config.yml is preserved.
+        this.config.saveDefaultConfig();
         getCommand("unexpectedspawn").setExecutor(new Reload(this));
         getServer().getPluginManager().registerEvents(new Spawn(this), this);
     }

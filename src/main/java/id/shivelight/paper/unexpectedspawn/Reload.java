@@ -38,6 +38,7 @@ public class Reload implements CommandExecutor {
             if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
                 if (sender.hasPermission("unexpectedspawn.use")) {
                     plugin.config.reloadConfig();
+                    //plugin.reloadConfig();
                     sender.sendMessage(Util.colorize("&8UnexpectedSpawn reloaded!"));
                     return true;
                 }
@@ -45,8 +46,8 @@ public class Reload implements CommandExecutor {
 
             String authors = String.join(", ", plugin.getDescription().getAuthors());
             String version = plugin.getDescription().getVersion();
-            sender.sendMessage(Util.colorize("UnexpectedSpawn &7version &8" + version));
-            sender.sendMessage(Util.colorize("Authors: &8" + authors + "&8&l ❤"));
+            sender.sendMessage(Util.colorize("UnexpectedSpawn Version : &8" + version));
+            sender.sendMessage(Util.colorize("Authors: &8" + authors));
 
             // By returning false, server will send out available commands.
             return !sender.hasPermission("unexpectedspawn.use");
