@@ -92,3 +92,8 @@ blacklisted-worlds:
   - bedwars
   - creative
 ```
+
+## Contributors
+- Shivelight
+- DeathGOD7
+- I dunno others name :D
