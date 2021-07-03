@@ -20,40 +20,19 @@
 
 package id.shivelight.paper.unexpectedspawn;
 
-import com.destroystokyo.paper.HeightmapType;
-import io.papermc.paper.world.MoonPhase;
-import org.apache.commons.lang.ObjectUtils;
-import org.bukkit.*;
-import org.bukkit.block.Biome;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.boss.DragonBattle;
-import org.bukkit.entity.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.generator.BlockPopulator;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.util.BoundingBox;
-import org.bukkit.util.Consumer;
-import org.bukkit.util.RayTraceResult;
-import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.junit.Test;
 
-import java.io.File;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Predicate;
 
 public class Spawn implements Listener {
 
