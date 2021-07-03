@@ -20,18 +20,40 @@
 
 package id.shivelight.paper.unexpectedspawn;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import com.destroystokyo.paper.HeightmapType;
+import io.papermc.paper.world.MoonPhase;
+import org.apache.commons.lang.ObjectUtils;
+import org.bukkit.*;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.boss.DragonBattle;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.generator.BlockPopulator;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Consumer;
+import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.List;
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Predicate;
 
 public class Spawn implements Listener {
 
@@ -76,6 +98,13 @@ public class Spawn implements Listener {
         }
     }
 
+    World deathWorld;
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent event){
+        deathWorld = event.getEntity().getWorld();
+    }
+
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         World joinWorld = event.getPlayer().getWorld();
@@ -86,16 +115,20 @@ public class Spawn implements Listener {
         }
 
         if (blackListedWorlds.contains(joinWorld)) {
-            logMessageConsole("User in blacklisted world. So random join spawn is disabled.","info");
+            // Debugger Start
+            //logMessageConsole("User in blacklisted world["+ joinWorld +"]. So random join spawn is disabled.","info");
+            // Debugger End
             return;
         }
 
         String useCustomOnFirstJoin = checkWorldConfig(joinWorld, "random-respawn.on-first-join");
         String useCustomAlwaysOnJoin = checkWorldConfig(joinWorld, "random-respawn.always-on-join");
 
-        logMessageConsole("Used config: " + useCustomOnFirstJoin + " for first join and the values is "+ plugin.config.getConfig().getBoolean(useCustomOnFirstJoin + "random-respawn.on-first-join"), "info");
-        logMessageConsole("Used config: " + useCustomAlwaysOnJoin + " for always on join and the values is "+ plugin.config.getConfig().getBoolean(useCustomAlwaysOnJoin + "random-respawn.always-on-join"), "info");
-
+        // Debugger Start
+        //logMessageConsole("Used config: " + useCustomOnFirstJoin + " for first join and the values is "+ plugin.config.getConfig().getBoolean(useCustomOnFirstJoin + "random-respawn.on-first-join"), "info");
+        //logMessageConsole("Used config: " + useCustomAlwaysOnJoin + " for always on join and the values is "+ plugin.config.getConfig().getBoolean(useCustomAlwaysOnJoin + "random-respawn.always-on-join"), "info");
+        // Debugger End
+        
         if ((!event.getPlayer().hasPlayedBefore() && plugin.config.getConfig().getBoolean(useCustomOnFirstJoin + "random-respawn.on-first-join"))
                 || plugin.config.getConfig().getBoolean(useCustomAlwaysOnJoin + "random-respawn.always-on-join")) {
             Location joinLocation = getRandomSpawnLocation(joinWorld);
@@ -105,11 +138,41 @@ public class Spawn implements Listener {
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
-        // List<World> allWorlds = Bukkit.getWorlds();
         World respawnWorld = event.getRespawnLocation().getWorld();
 
+        String useCustomWorld = checkWorldConfig(deathWorld, "respawn-world");
+        String obtainedData = plugin.config.getConfig().getString(useCustomWorld + "respawn-world");
+
+        if (obtainedData != null) {
+            if(obtainedData.isEmpty()){
+                respawnWorld = deathWorld;
+                String wName = respawnWorld.getName();
+                logMessageConsole("Using world ("+ wName +") where player died.","info");
+            }
+            else {
+                World obtainedWorld = Bukkit.getWorld(obtainedData);
+                if (obtainedWorld == null) {
+                    logMessageConsole("Couldn't find world "+ obtainedData + ". Either it doesn't exist or is not valid.","warn");
+                    respawnWorld = deathWorld;;
+                    String wName = respawnWorld.getName();
+                    logMessageConsole("Using world ("+ wName +") where player died.","info");
+                }
+                else {
+                    respawnWorld = obtainedWorld;
+
+                    String wName = respawnWorld.getName();
+                    logMessageConsole("Using world ("+ wName +") specified in config.","info");
+                }
+            }
+        }
+        else {
+            logMessageConsole("Respawn World in ("+useCustomWorld+") cannot be null. Please add empty string to disable it.","severe");
+        }
+
         if (blackListedWorlds.contains(respawnWorld)) {
-            logMessageConsole("User in blacklisted world. So random respawn is disabled.","info");
+            // Debugger Start
+            //logMessageConsole("User in blacklisted world["+ respawnWorld +"]. So random respawn is disabled.","info");
+            // Debugger End
             return;
         }
 
@@ -120,8 +183,10 @@ public class Spawn implements Listener {
         String useCustomOnDeath = checkWorldConfig(respawnWorld, "random-respawn.on-death");
         String useCustomBedRespawn = checkWorldConfig(respawnWorld, "random-respawn.bed-respawn-enabled");
 
-        logMessageConsole("Used config: " + useCustomOnDeath + " for on death and the values is "+ plugin.config.getConfig().getBoolean(useCustomOnDeath + "random-respawn.on-death"), "info");
-        logMessageConsole("Used config: " + useCustomBedRespawn + " for bed respawn and the values is "+ plugin.config.getConfig().getBoolean(useCustomBedRespawn + "random-respawn.bed-respawn-enabled"), "info");
+        // Debugger Start
+        //logMessageConsole("Used config: " + useCustomOnDeath + " for on death and the values is "+ plugin.config.getConfig().getBoolean(useCustomOnDeath + "random-respawn.on-death"), "info");
+        //logMessageConsole("Used config: " + useCustomBedRespawn + " for bed respawn and the values is "+ plugin.config.getConfig().getBoolean(useCustomBedRespawn + "random-respawn.bed-respawn-enabled"), "info");
+        // Debugger End
 
         if(plugin.config.getConfig().getBoolean(useCustomOnDeath + "random-respawn.on-death")) {
             if (!event.isBedSpawn() || !plugin.config.getConfig().getBoolean(useCustomBedRespawn + "random-respawn.bed-respawn-enabled")) {
@@ -168,12 +233,16 @@ public class Spawn implements Listener {
         int zmin = plugin.config.getConfig().getInt(useCustomMinZ + "z-min");
         int zmax = plugin.config.getConfig().getInt(useCustomMaxZ + "z-max");
 
-        logMessageConsole("Used config: " + useCustomMinX + " for random respawn area and the values are ("+xmin+","+xmax+","+zmin+","+zmax+")","info");
+        // Debugger Start
+        //logMessageConsole("Used config: " + useCustomMinX + " for random respawn area and the values are ("+xmin+","+xmax+","+zmin+","+zmax+")","info");
+        // Debugger End
 
         String useCustomBlacklistedMaterials = checkWorldConfig(world, "spawn-block-blacklist");
         HashSet<Material> blacklistedMaterials = getBlacklistedMaterials(useCustomBlacklistedMaterials);
 
-        logMessageConsole("Used config: " + useCustomBlacklistedMaterials + " and the values are : " + blacklistedMaterials,"info");
+        // Debugger Start
+        //logMessageConsole("Used config: " + useCustomBlacklistedMaterials + " and the values are : " + blacklistedMaterials,"info");
+        // Debugger End
 
         while (true) {
             int x = xmin + ThreadLocalRandom.current().nextInt((xmax - xmin) + 1);

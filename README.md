@@ -39,6 +39,9 @@ global:
   z-max: 399
   z-min: -399
 
+  #Sets the global respawn world unless set in custom config worlds.
+  respawn-world: ''
+
   # Do you want to have random respawn than normal world respawn? By default it is enabled in all worlds. If you want to
   # disable it in specific world, then add that world name in below 'blacklisted-worlds'.
   random-respawn:
@@ -79,6 +82,7 @@ worlds: []
 #    x-min: -500
 #    z-max: 500
 #    z-min: -500
+#    respawn-world: ''
 #    random-respawn:
 #      on-death: true
 #      bed-respawn-enabled: true
@@ -88,9 +92,9 @@ worlds: []
 # If you have any worlds here , then it will be excluded from having random spawn
 # Even if you have set custom settings in above settings and you add that world to
 # blacklist, it will be excluded. Default :[]
-blacklisted-worlds:
-  - bedwars
-  - creative
+blacklisted-worlds: []
+#  - bedwars
+#  - creative
 ```
 
 ## Contributors
