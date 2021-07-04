@@ -9,10 +9,11 @@ Things that were added :
 - toggle switch for random respawn on death
 - fixed the config keys so it doesn't make plugin users confused
 - added per world config settings
+- added per world respawn world
 
-To Do List : 
-- remove debuggers in code
-- check for plugin error and bugs
+## Minor Bug
+You will respawn in the spawn point of Nether world if you are using the old version of Multiverse 4.2.2 and below and running a 1.16+ server.
+To fix that just use the latest build or v 4.3.0 or higher where multiverse fixed that issue.
 
 Code Updated by : https://github.com/DeathGOD7
 
