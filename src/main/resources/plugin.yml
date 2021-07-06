@@ -2,13 +2,16 @@ name: UnexpectedSpawn
 version: ${project.version}
 main: id.shivelight.paper.unexpectedspawn.UnexpectedSpawn
 api-version: 1.13
-authors: [Shivelight]
+authors: [Shivelight, DeathGOD7]
 description: Randomize player spawn point.
+prefix: UnexpectedSpawn
 website: https://shivelight.id
+softdepend: [Multiverse-Core]
 commands:
   unexpectedspawn:
     usage: /<command> reload
     description: Reload UnexpectedSpawn.
+    aliases: uns
 permissions:
   unexpectedspawn.use:
     description: Use UnexpectedSpawn command.

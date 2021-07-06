@@ -1,3 +1,7 @@
+# DeathGOD7 Files
+*.backup
+*.template
+
 # Compiled class file
 *.class
 
