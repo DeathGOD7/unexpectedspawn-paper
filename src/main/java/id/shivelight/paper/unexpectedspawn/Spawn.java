@@ -38,7 +38,7 @@ public class Spawn implements Listener {
 
     private final UnexpectedSpawn plugin;
     private final HashSet<Material> blacklistedMaterial = new HashSet<>();
-    private final HashSet<World> blackListedWorlds = new HashSet<>();
+    private final HashSet<World> blacklistedWorlds = new HashSet<>();
 
     Spawn(UnexpectedSpawn plugin) {
         this.plugin = plugin;
@@ -54,26 +54,13 @@ public class Spawn implements Listener {
 //        }
 
         List<String> worldList = plugin.config.getConfig().getStringList("blacklisted-worlds");
-        for (String name: worldList) {
+        for (String name : worldList) {
             World world = Bukkit.getWorld(name);
             if (world == null) {
-                logMessageConsole("Couldn't find world "+ name + ". Either it doesn't exist or is not valid.","warn");
+                LogConsole.warn("Couldn't find world " + name + ". Either it doesn't exist or is not valid.");
                 continue;
             }
-            blackListedWorlds.add(world);
-        }
-    }
-
-    private void logMessageConsole(String msg, String type) {
-        String logPrefix = "[UnexpectedSpawn] ";
-        if (type.equals("severe")) {
-            Bukkit.getLogger().severe(logPrefix + msg);
-        }
-        else if (type.equals("warn")) {
-            Bukkit.getLogger().warning(logPrefix + msg);
-        }
-        else {
-            Bukkit.getLogger().info(logPrefix + msg);
+            blacklistedWorlds.add(world);
         }
     }
 
@@ -93,9 +80,9 @@ public class Spawn implements Listener {
             return;
         }
 
-        if (blackListedWorlds.contains(joinWorld)) {
+        if (blacklistedWorlds.contains(joinWorld)) {
             // Debugger Start
-            //logMessageConsole("User in blacklisted world["+ joinWorld +"]. So random join spawn is disabled.","info");
+            //LogConsole.info("User in blacklisted world["+ joinWorld +"]. So random join spawn is disabled.");
             // Debugger End
             return;
         }
@@ -104,8 +91,8 @@ public class Spawn implements Listener {
         String useCustomAlwaysOnJoin = checkWorldConfig(joinWorld, "random-respawn.always-on-join");
 
         // Debugger Start
-        //logMessageConsole("Used config: " + useCustomOnFirstJoin + " for first join and the values is "+ plugin.config.getConfig().getBoolean(useCustomOnFirstJoin + "random-respawn.on-first-join"), "info");
-        //logMessageConsole("Used config: " + useCustomAlwaysOnJoin + " for always on join and the values is "+ plugin.config.getConfig().getBoolean(useCustomAlwaysOnJoin + "random-respawn.always-on-join"), "info");
+        //LogConsole.info("Used config: " + useCustomOnFirstJoin + " for first join and the values is "+ plugin.config.getConfig().getBoolean(useCustomOnFirstJoin + "random-respawn.on-first-join"));
+        //LogConsole.info("Used config: " + useCustomAlwaysOnJoin + " for always on join and the values is "+ plugin.config.getConfig().getBoolean(useCustomAlwaysOnJoin + "random-respawn.always-on-join"));
         // Debugger End
         
         if ((!event.getPlayer().hasPlayedBefore() && plugin.config.getConfig().getBoolean(useCustomOnFirstJoin + "random-respawn.on-first-join"))
@@ -126,31 +113,31 @@ public class Spawn implements Listener {
             if(obtainedData.isEmpty()){
                 respawnWorld = deathWorld;
                 String wName = respawnWorld.getName();
-                logMessageConsole("Using world ("+ wName +") where player died.","info");
+                LogConsole.info("Using world ("+ wName +") where player died.");
             }
             else {
                 World obtainedWorld = Bukkit.getWorld(obtainedData);
                 if (obtainedWorld == null) {
-                    logMessageConsole("Couldn't find world "+ obtainedData + ". Either it doesn't exist or is not valid.","warn");
+                    LogConsole.warn("Couldn't find world "+ obtainedData + ". Either it doesn't exist or is not valid.");
                     respawnWorld = deathWorld;;
                     String wName = respawnWorld.getName();
-                    logMessageConsole("Using world ("+ wName +") where player died.","info");
+                    LogConsole.info("Using world ("+ wName +") where player died.");
                 }
                 else {
                     respawnWorld = obtainedWorld;
 
                     String wName = respawnWorld.getName();
-                    logMessageConsole("Using world ("+ wName +") specified in config.","info");
+                    LogConsole.info("Using world ("+ wName +") specified in config.");
                 }
             }
         }
         else {
-            logMessageConsole("Respawn World in ("+useCustomWorld+") cannot be null. Please add empty string to disable it.","severe");
+            LogConsole.severe("Respawn World in ("+useCustomWorld+") cannot be null. Please add empty string to disable it.");
         }
 
-        if (blackListedWorlds.contains(respawnWorld)) {
+        if (blacklistedWorlds.contains(respawnWorld)) {
             // Debugger Start
-            //logMessageConsole("User in blacklisted world["+ respawnWorld +"]. So random respawn is disabled.","info");
+            //LogConsole.info("User in blacklisted world["+ respawnWorld +"]. So random respawn is disabled.","info");
             // Debugger End
             return;
         }
@@ -163,8 +150,8 @@ public class Spawn implements Listener {
         String useCustomBedRespawn = checkWorldConfig(respawnWorld, "random-respawn.bed-respawn-enabled");
 
         // Debugger Start
-        //logMessageConsole("Used config: " + useCustomOnDeath + " for on death and the values is "+ plugin.config.getConfig().getBoolean(useCustomOnDeath + "random-respawn.on-death"), "info");
-        //logMessageConsole("Used config: " + useCustomBedRespawn + " for bed respawn and the values is "+ plugin.config.getConfig().getBoolean(useCustomBedRespawn + "random-respawn.bed-respawn-enabled"), "info");
+        //LogConsole.info("Used config: " + useCustomOnDeath + " for on death and the values is "+ plugin.config.getConfig().getBoolean(useCustomOnDeath + "random-respawn.on-death"), "info");
+        //LogConsole.info("Used config: " + useCustomBedRespawn + " for bed respawn and the values is "+ plugin.config.getConfig().getBoolean(useCustomBedRespawn + "random-respawn.bed-respawn-enabled"), "info");
         // Debugger End
 
         if(plugin.config.getConfig().getBoolean(useCustomOnDeath + "random-respawn.on-death")) {
@@ -193,7 +180,7 @@ public class Spawn implements Listener {
         for (String name : materialList) {
             Material material = Material.getMaterial(name);
             if (material == null) {
-                logMessageConsole("Material " + name + " is not valid. See https://papermc.io/javadocs/paper/org/bukkit/Material.html", "warn");
+                LogConsole.warn("Material " + name + " is not valid. See https://papermc.io/javadocs/paper/org/bukkit/Material.html");
                 continue;
             }
             blacklistedMaterial.add(material);
@@ -213,14 +200,14 @@ public class Spawn implements Listener {
         int zmax = plugin.config.getConfig().getInt(useCustomMaxZ + "z-max");
 
         // Debugger Start
-        //logMessageConsole("Used config: " + useCustomMinX + " for random respawn area and the values are ("+xmin+","+xmax+","+zmin+","+zmax+")","info");
+        //LogConsole.info("Used config: " + useCustomMinX + " for random respawn area and the values are ("+xmin+","+xmax+","+zmin+","+zmax+")","info");
         // Debugger End
 
         String useCustomBlacklistedMaterials = checkWorldConfig(world, "spawn-block-blacklist");
-        HashSet<Material> blacklistedMaterials = getBlacklistedMaterials(useCustomBlacklistedMaterials);
+        HashSet<Material> worldBlacklistedMaterials = getBlacklistedMaterials(useCustomBlacklistedMaterials);
 
         // Debugger Start
-        //logMessageConsole("Used config: " + useCustomBlacklistedMaterials + " and the values are : " + blacklistedMaterials,"info");
+        //LogConsole.info("Used config: " + useCustomBlacklistedMaterials + " and the values are : " + blacklistedMaterials,"info");
         // Debugger End
 
         while (true) {
@@ -236,7 +223,7 @@ public class Spawn implements Listener {
                 location = location.subtract(0, 1, 0);
             }
 
-            if (blacklistedMaterials.contains(location.getBlock().getType())) {
+            if (worldBlacklistedMaterials.contains(location.getBlock().getType())) {
                 continue;
             }
 

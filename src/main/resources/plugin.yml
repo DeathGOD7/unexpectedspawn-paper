@@ -6,7 +6,7 @@ authors: [Shivelight, DeathGOD7]
 description: Randomize player spawn point.
 prefix: UnexpectedSpawn
 website: https://shivelight.id
-softdepend: [MultiverseCore]
+softdepend: [Multiverse-Core]
 commands:
   unexpectedspawn:
     usage: /<command> reload

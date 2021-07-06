@@ -1,29 +1,36 @@
-![Artwork](assets/artwork.png)
+<p align="center">
+<img src="https://raw.githubusercontent.com/Shivelight/unexpectedspawn-paper/master/assets/artwork.png">
+<br>
+<img src="https://img.shields.io/badge/Crafted%20in-Java-red?style=flat&logo=java">
+<img src="https://img.shields.io/github/v/release/Shivelight/unexpectedspawn-paper?color=green">
+</p>
 
 **This is a [Paper](https://github.com/PaperMC/Paper) plugin!**
 
-Simple plugin to randomize any player spawn point. Suitable for Hardcore / Anarchy server.
+Simple plugin to randomize any player spawn point. Suitable for Hardcore / Anarchy server, or you just want people to be scattered in you server world.
 
 Things that were added : 
-- global values for world that don't have custom config
-- toggle switch for random respawn on death
-- fixed the config keys so it doesn't make plugin users confused
-- added per world config settings
-- added per world respawn world
+- Global values for world that don't have custom config
+- Toggle switch for random respawn on death
+- Fixed the config keys, so it doesn't make plugin users confused
+- Added per world config settings
+- Added per world respawn world
 
 ## Minor Bug
 You will respawn in the spawn point of Nether world if you are using the old version of Multiverse 4.2.2 and below and running a 1.16+ server.
 To fix that just use the latest build or v 4.3.0 or higher where multiverse fixed that issue.
+
+If you still have issues, please send it in Issues tab rather than sending it in spigot plugin page review.
 
 Code Updated by : https://github.com/DeathGOD7
 
 
 ## Commands and Permissions
 
-| Command                 | Description          | Permission          |
-| ----------------------- | -------------------- | ------------------- |
-| /unexpectedspawn        | Show version         | -                   |
-| /unexpectedspawn reload | Reload configuration | unexpectedspawn.use |
+| Command                 | Alias         | Description          | Permission          |
+| ----------------------- | ------------- | -------------------- | ------------------- |
+| /unexpectedspawn        |  /uns         | Shows version         | -                   |
+| /unexpectedspawn reload |  /uns reload  | Reload configuration | unexpectedspawn.use |
 
 ## Configuration
 
@@ -101,4 +108,4 @@ blacklisted-worlds: []
 ## Contributors
 - Shivelight
 - DeathGOD7
-- I dunno others name :D
+- Roshanxy
