@@ -33,6 +33,7 @@ public final class UnexpectedSpawn extends JavaPlugin {
 //        config.saveConfig();
 //        used this so the comment in config.yml is preserved.
         this.config.saveDefaultConfig();
+
         getCommand("unexpectedspawn").setExecutor(new Reload(this));
         getServer().getPluginManager().registerEvents(new Spawn(this), this);
     }

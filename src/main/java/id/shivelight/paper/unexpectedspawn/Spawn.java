@@ -2,7 +2,7 @@
  * This file is part of UnexpectedSpawn
  * (see https://github.com/Shivelight/unexpectedspawn-paper).
  *
- * Copyright (c) 2019 Shivelight.
+ * Copyright (c) 2021 Shivelight.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@
 
 package id.shivelight.paper.unexpectedspawn;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import net.kyori.adventure.text.*;
+import net.kyori.adventure.text.format.*;
+import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -57,7 +57,7 @@ public class Spawn implements Listener {
         for (String name : worldList) {
             World world = Bukkit.getWorld(name);
             if (world == null) {
-                LogConsole.warn("Couldn't find world " + name + ". Either it doesn't exist or is not valid.");
+                LogConsole.warn("Couldn't find world " + name + ". Either it doesn't exist or is not valid.", LogConsole.logTypes.log);
                 continue;
             }
             blacklistedWorlds.add(world);
@@ -65,35 +65,55 @@ public class Spawn implements Listener {
     }
 
     World deathWorld;
+    Player deadPlayer;
+    Location deathLocation;
+
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event){
         deathWorld = event.getEntity().getWorld();
+        deadPlayer = event.getEntity();
+        deathLocation = deadPlayer.getLocation();
+        LogConsole.info("Player " + deadPlayer.getName() + " died at (x"
+                    + deathLocation.getBlockX() + ", y" + deathLocation.getBlockY() + ", z" + deathLocation.getBlockZ() +
+                    ") at world (" + deathWorld.getName() + ").", LogConsole.logTypes.debug);
+
+        if (deadPlayer != null && deadPlayer.hasPermission("unexpectedspawn.notify")) {
+            final TextComponent textComponent = Component.text("Your death location (")
+                    .color(NamedTextColor.WHITE)
+                    .append(Component.text("x" + deathLocation.getBlockX() , TextColor.fromHexString("#dd0000")))
+                    .append(Component.text(", ", NamedTextColor.WHITE))
+                    .append(Component.text("y" + deathLocation.getBlockY() , TextColor.fromHexString("#00dd00")))
+                    .append(Component.text(", ", NamedTextColor.WHITE))
+                    .append(Component.text("z" + deathLocation.getBlockZ() , TextColor.fromHexString("#0000dd")))
+                    .append(Component.text(") in world (" + deathWorld.getName() + ").", NamedTextColor.WHITE));
+            deadPlayer.sendMessage(textComponent);
+        }
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         World joinWorld = event.getPlayer().getWorld();
 
+        if (event.getPlayer().hasPermission("unexpectedspawn.bypass")) {
+            LogConsole.info("Player " + event.getPlayer().getName()
+                + " has (unexpectedspawn.bypass) permission. So skipping random join spawn.", LogConsole.logTypes.debug);
+            return;
+        }
+
         if (joinWorld.getEnvironment().equals(World.Environment.NETHER)
                 || joinWorld.getEnvironment().equals(World.Environment.THE_END)) {
+            LogConsole.info("User in NETHER or END. So random join spawn is disabled.", LogConsole.logTypes.debug);
             return;
         }
 
         if (blacklistedWorlds.contains(joinWorld)) {
-            // Debugger Start
-            //LogConsole.info("User in blacklisted world["+ joinWorld +"]. So random join spawn is disabled.");
-            // Debugger End
+            LogConsole.info("User in blacklisted world (" + joinWorld + "). So random join spawn is disabled.", LogConsole.logTypes.debug);
             return;
         }
 
         String useCustomOnFirstJoin = checkWorldConfig(joinWorld, "random-respawn.on-first-join");
         String useCustomAlwaysOnJoin = checkWorldConfig(joinWorld, "random-respawn.always-on-join");
-
-        // Debugger Start
-        //LogConsole.info("Used config: " + useCustomOnFirstJoin + " for first join and the values is "+ plugin.config.getConfig().getBoolean(useCustomOnFirstJoin + "random-respawn.on-first-join"));
-        //LogConsole.info("Used config: " + useCustomAlwaysOnJoin + " for always on join and the values is "+ plugin.config.getConfig().getBoolean(useCustomAlwaysOnJoin + "random-respawn.always-on-join"));
-        // Debugger End
         
         if ((!event.getPlayer().hasPlayedBefore() && plugin.config.getConfig().getBoolean(useCustomOnFirstJoin + "random-respawn.on-first-join"))
                 || plugin.config.getConfig().getBoolean(useCustomAlwaysOnJoin + "random-respawn.always-on-join")) {
@@ -105,40 +125,52 @@ public class Spawn implements Listener {
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
         World respawnWorld = event.getRespawnLocation().getWorld();
+        String wName = respawnWorld.getName();
 
-        String useCustomWorld = checkWorldConfig(deathWorld, "respawn-world");
-        String obtainedData = plugin.config.getConfig().getString(useCustomWorld + "respawn-world");
+        if (event.getPlayer().hasPermission("unexpectedspawn.bypass")) {
+            LogConsole.info("Player " + event.getPlayer().getName()
+                    + " has (unexpectedspawn.bypass) permission. So skipping random respawn.", LogConsole.logTypes.debug);
+            return;
+        }
 
-        if (obtainedData != null) {
-            if(obtainedData.isEmpty()){
-                respawnWorld = deathWorld;
-                String wName = respawnWorld.getName();
-                LogConsole.info("Using world ("+ wName +") where player died.");
-            }
-            else {
-                World obtainedWorld = Bukkit.getWorld(obtainedData);
-                if (obtainedWorld == null) {
-                    LogConsole.warn("Couldn't find world "+ obtainedData + ". Either it doesn't exist or is not valid.");
-                    respawnWorld = deathWorld;;
-                    String wName = respawnWorld.getName();
-                    LogConsole.info("Using world ("+ wName +") where player died.");
+        if (deathWorld != null) {
+            String useCustomWorld = checkWorldConfig(deathWorld, "respawn-world");
+            String obtainedData = plugin.config.getConfig().getString(useCustomWorld + "respawn-world");
+
+            if (obtainedData != null) {
+                if (obtainedData.isEmpty()) {
+                    respawnWorld = deathWorld;
+                    wName = respawnWorld.getName();
+                    LogConsole.info("Using world (" + wName + ") where player died.", LogConsole.logTypes.debug);
                 }
+
                 else {
-                    respawnWorld = obtainedWorld;
+                    World obtainedWorld = Bukkit.getWorld(obtainedData);
 
-                    String wName = respawnWorld.getName();
-                    LogConsole.info("Using world ("+ wName +") specified in config.");
+                    if (obtainedWorld == null) {
+                        LogConsole.warn("Couldn't find world " + obtainedData + ". Either it doesn't exist or is not valid.", LogConsole.logTypes.log);
+                        respawnWorld = deathWorld;
+                        wName = respawnWorld.getName();
+                        LogConsole.info("Using world (" + wName + ") where player died.", LogConsole.logTypes.debug);
+                    }
+
+                    else {
+                        respawnWorld = obtainedWorld;
+
+                        wName = respawnWorld.getName();
+                        LogConsole.info("Using world (" + wName + ") specified in config.", LogConsole.logTypes.debug);
+                    }
                 }
+            } else {
+                LogConsole.severe("Respawn World in (" + useCustomWorld + ") cannot be null. Please add empty string to disable it.", LogConsole.logTypes.log);
             }
         }
         else {
-            LogConsole.severe("Respawn World in ("+useCustomWorld+") cannot be null. Please add empty string to disable it.");
+            LogConsole.info("Using world (" + wName + ") where player will respawn normally. Probably coming back to OVERWORLD from END.", LogConsole.logTypes.debug);
         }
 
         if (blacklistedWorlds.contains(respawnWorld)) {
-            // Debugger Start
-            //LogConsole.info("User in blacklisted world["+ respawnWorld +"]. So random respawn is disabled.","info");
-            // Debugger End
+            LogConsole.info("User in blacklisted world ("+ respawnWorld +"). So random respawn is disabled.", LogConsole.logTypes.debug);
             return;
         }
 
@@ -149,10 +181,6 @@ public class Spawn implements Listener {
         String useCustomOnDeath = checkWorldConfig(respawnWorld, "random-respawn.on-death");
         String useCustomBedRespawn = checkWorldConfig(respawnWorld, "random-respawn.bed-respawn-enabled");
 
-        // Debugger Start
-        //LogConsole.info("Used config: " + useCustomOnDeath + " for on death and the values is "+ plugin.config.getConfig().getBoolean(useCustomOnDeath + "random-respawn.on-death"), "info");
-        //LogConsole.info("Used config: " + useCustomBedRespawn + " for bed respawn and the values is "+ plugin.config.getConfig().getBoolean(useCustomBedRespawn + "random-respawn.bed-respawn-enabled"), "info");
-        // Debugger End
 
         if(plugin.config.getConfig().getBoolean(useCustomOnDeath + "random-respawn.on-death")) {
             if (!event.isBedSpawn() || !plugin.config.getConfig().getBoolean(useCustomBedRespawn + "random-respawn.bed-respawn-enabled")) {
@@ -180,7 +208,7 @@ public class Spawn implements Listener {
         for (String name : materialList) {
             Material material = Material.getMaterial(name);
             if (material == null) {
-                LogConsole.warn("Material " + name + " is not valid. See https://papermc.io/javadocs/paper/org/bukkit/Material.html");
+                LogConsole.warn("Material " + name + " is not valid. See https://papermc.io/javadocs/paper/org/bukkit/Material.html", LogConsole.logTypes.log);
                 continue;
             }
             blacklistedMaterial.add(material);
@@ -199,16 +227,14 @@ public class Spawn implements Listener {
         int zmin = plugin.config.getConfig().getInt(useCustomMinZ + "z-min");
         int zmax = plugin.config.getConfig().getInt(useCustomMaxZ + "z-max");
 
-        // Debugger Start
-        //LogConsole.info("Used config: " + useCustomMinX + " for random respawn area and the values are ("+xmin+","+xmax+","+zmin+","+zmax+")","info");
-        // Debugger End
+
+        LogConsole.info("Used config: " + useCustomMinX + " for random respawn area and the values are ("+xmin+","+xmax+","+zmin+","+zmax+").", LogConsole.logTypes.debug);
+
 
         String useCustomBlacklistedMaterials = checkWorldConfig(world, "spawn-block-blacklist");
         HashSet<Material> worldBlacklistedMaterials = getBlacklistedMaterials(useCustomBlacklistedMaterials);
 
-        // Debugger Start
-        //LogConsole.info("Used config: " + useCustomBlacklistedMaterials + " and the values are : " + blacklistedMaterials,"info");
-        // Debugger End
+        LogConsole.info("Used config: " + useCustomBlacklistedMaterials + " and the values are : " + worldBlacklistedMaterials, LogConsole.logTypes.debug);
 
         while (true) {
             int x = xmin + ThreadLocalRandom.current().nextInt((xmax - xmin) + 1);

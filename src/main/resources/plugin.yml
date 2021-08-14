@@ -16,3 +16,9 @@ permissions:
   unexpectedspawn.use:
     description: Use UnexpectedSpawn command.
     default: op
+  unexpectedspawn.notify:
+    description: Get notified about your death location.
+    default: op
+  unexpectedspawn.bypass:
+    description: Bypass random respawn.
+    default: op
