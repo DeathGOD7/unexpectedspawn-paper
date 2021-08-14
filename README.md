@@ -2,6 +2,7 @@
 <img src="https://raw.githubusercontent.com/Shivelight/unexpectedspawn-paper/master/assets/artwork.png">
 <br>
 <img src="https://img.shields.io/badge/Crafted%20in-Java-red?style=flat&logo=java">
+<a href="https://discord.gg/7wqnERhG9f"><img src="https://img.shields.io/static/v1?label=Discord&message=Join&style=flat&logo=discord&color=7289da"></a>
 <img src="https://img.shields.io/github/v/release/Shivelight/unexpectedspawn-paper?color=green">
 </p>
 
@@ -9,20 +10,28 @@
 
 Simple plugin to randomize any player spawn point. Suitable for Hardcore / Anarchy server, or you just want people to be scattered in you server world.
 
+[Discord](https://discord.gg/7wqnERhG9f) | [Spigot](https://www.spigotmc.org/resources/unexpectedspawn-randomize-player-spawn.32601/)
+
 Things that were added : 
 - Global values for world that don't have custom config
 - Toggle switch for random respawn on death
 - Fixed the config keys, so it doesn't make plugin users confused
 - Added per world config settings
 - Added per world respawn world
+- Added option to toggle debug mode, which will be helpful for debugging bugs and identifying errors
+- Added 2 new permission nodes
+
+Bugs Fixed :
+- Fixed error when coming back to overworld from end
+- Fixed the nether issue that it used to respawn in same world if there is no world specified in global config
+  (Rather it's config missing respawn world in global keys. So added default respawn world for global config to be "world".)
+
 
 ## Minor Bug
 You will respawn in the spawn point of Nether world if you are using the old version of Multiverse 4.2.2 and below and running a 1.16+ server.
-To fix that just use the latest build or v 4.3.0 or higher where multiverse fixed that issue.
+To fix that just use the latest build or v4.3.0 or higher where multiverse fixed that issue.
 
 If you still have issues, please send it in Issues tab rather than sending it in spigot plugin page review.
-
-Code Updated by : https://github.com/DeathGOD7
 
 
 ## Commands and Permissions
@@ -32,13 +41,22 @@ Code Updated by : https://github.com/DeathGOD7
 | /unexpectedspawn        |  /uns         | Shows version         | -                   |
 | /unexpectedspawn reload |  /uns reload  | Reload configuration | unexpectedspawn.use |
 
+## Additional Permissions
+
+- unexpectedspawn.use
+  (Allows user to do /uns reload) Default : OP
+
+- unexpectedspawn.notify
+  (Notifies user about their death location) Default : OP
+
+- unexpectedspawn.bypass
+  (Bypasses the random respawn or random join checks. Uses vanilla method) Default : OP
+
 ## Configuration
 
 ```yaml
 # UnexpectedSpawn
 # Authors : Shivelight, DeathGOD7
-# Original : https://github.com/Shivelight/unexpectedspawn-paper
-# Modified : https://github.com/DeathGOD7/unexpectedspawn-paper
 
 global:
   # Random respawn area for global settings.
@@ -48,7 +66,7 @@ global:
   z-min: -399
 
   #Sets the global respawn world unless set in custom config worlds.
-  respawn-world: ''
+  respawn-world: 'world'
 
   # Do you want to have random respawn than normal world respawn? By default it is enabled in all worlds. If you want to
   # disable it in specific world, then add that world name in below 'blacklisted-worlds'.
@@ -103,6 +121,8 @@ worlds: []
 blacklisted-worlds: []
 #  - bedwars
 #  - creative
+
+debug : false
 ```
 
 ## Contributors

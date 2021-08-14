@@ -1,7 +1,5 @@
 # UnexpectedSpawn
 # Authors : Shivelight, DeathGOD7
-# Original : https://github.com/Shivelight/unexpectedspawn-paper
-# Modified : https://github.com/DeathGOD7/unexpectedspawn-paper
 
 global:
   # Random respawn area for global settings.
@@ -11,7 +9,7 @@ global:
   z-min: -399
 
   #Sets the global respawn world unless set in custom config worlds.
-  respawn-world: ''
+  respawn-world: 'world'
 
   # Do you want to have random respawn than normal world respawn? By default it is enabled in all worlds. If you want to
   # disable it in specific world, then add that world name in below 'blacklisted-worlds'.
@@ -66,3 +64,5 @@ worlds: []
 blacklisted-worlds: []
 #  - bedwars
 #  - creative
+
+debug : false
