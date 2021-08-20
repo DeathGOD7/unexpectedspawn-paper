@@ -6,7 +6,7 @@
 
     <groupId>id.shivelight.paper</groupId>
     <artifactId>unexpectedspawn</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.0+hotfix.1</version>
     <packaging>jar</packaging>
 
     <name>UnexpectedSpawn</name>
