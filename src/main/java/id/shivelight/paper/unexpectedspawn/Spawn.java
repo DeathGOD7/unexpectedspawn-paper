@@ -20,9 +20,10 @@
 
 package id.shivelight.paper.unexpectedspawn;
 
-import net.kyori.adventure.text.*;
-import net.kyori.adventure.text.format.*;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -79,15 +80,8 @@ public class Spawn implements Listener {
                     ") at world (" + deathWorld.getName() + ").", LogConsole.logTypes.debug);
 
         if (deadPlayer != null && deadPlayer.hasPermission("unexpectedspawn.notify")) {
-            final TextComponent textComponent = Component.text("Your death location (")
-                    .color(NamedTextColor.WHITE)
-                    .append(Component.text("x" + deathLocation.getBlockX() , TextColor.fromHexString("#dd0000")))
-                    .append(Component.text(", ", NamedTextColor.WHITE))
-                    .append(Component.text("y" + deathLocation.getBlockY() , TextColor.fromHexString("#00dd00")))
-                    .append(Component.text(", ", NamedTextColor.WHITE))
-                    .append(Component.text("z" + deathLocation.getBlockZ() , TextColor.fromHexString("#0000dd")))
-                    .append(Component.text(") in world (" + deathWorld.getName() + ").", NamedTextColor.WHITE));
-            deadPlayer.sendMessage(textComponent);
+            String msg = "Your death location (x%s, y%s, z%s) in world (%s).";
+            deadPlayer.sendMessage(String.format(msg, deathLocation.getBlockX(), deathLocation.getBlockY(), deathLocation.getBlockZ(), deathWorld.getName()));
         }
     }
 
