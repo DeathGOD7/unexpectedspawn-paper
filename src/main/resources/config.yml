@@ -28,6 +28,7 @@ global:
 
   # Specify any block where you don't want user to be teleported. You don't them to drown in lava/water or land on
   # someone else campfire, no?
+  invert-block-blacklist: false
   spawn-block-blacklist:
     - LAVA
     - WATER

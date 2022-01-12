@@ -20,8 +20,6 @@
 
 package id.shivelight.paper.unexpectedspawn;
 
-import net.kyori.adventure.text.*;
-import net.kyori.adventure.text.format.*;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -79,15 +77,8 @@ public class Spawn implements Listener {
                     ") at world (" + deathWorld.getName() + ").", LogConsole.logTypes.debug);
 
         if (deadPlayer != null && deadPlayer.hasPermission("unexpectedspawn.notify")) {
-            final TextComponent textComponent = Component.text("Your death location (")
-                    .color(NamedTextColor.WHITE)
-                    .append(Component.text("x" + deathLocation.getBlockX() , TextColor.fromHexString("#dd0000")))
-                    .append(Component.text(", ", NamedTextColor.WHITE))
-                    .append(Component.text("y" + deathLocation.getBlockY() , TextColor.fromHexString("#00dd00")))
-                    .append(Component.text(", ", NamedTextColor.WHITE))
-                    .append(Component.text("z" + deathLocation.getBlockZ() , TextColor.fromHexString("#0000dd")))
-                    .append(Component.text(") in world (" + deathWorld.getName() + ").", NamedTextColor.WHITE));
-            deadPlayer.sendMessage(textComponent);
+            String msg = "Your death location (&4x%s&r, &2y%s&r, &1z%s&r) in world (%s).";
+            deadPlayer.sendMessage(String.format(msg, deathLocation.getBlockX(), deathLocation.getBlockY(), deathLocation.getBlockZ(), deathWorld.getName()));
         }
     }
 
@@ -217,6 +208,7 @@ public class Spawn implements Listener {
     }
 
     private Location getRandomSpawnLocation(World world) {
+        int tryCount = 0;
         String useCustomMinX = checkWorldConfig(world, "x-min");
         String useCustomMaxX = checkWorldConfig(world, "x-max");
         String useCustomMinZ = checkWorldConfig(world, "z-min");
@@ -234,12 +226,18 @@ public class Spawn implements Listener {
         String useCustomBlacklistedMaterials = checkWorldConfig(world, "spawn-block-blacklist");
         HashSet<Material> worldBlacklistedMaterials = getBlacklistedMaterials(useCustomBlacklistedMaterials);
 
+        String useCustomSpawnBlacklistInverted = checkWorldConfig(world, "invert-block-blacklist");
+        boolean isSpawnBlacklistInverted = plugin.config.getConfig().getBoolean(useCustomSpawnBlacklistInverted + "isSpawnBlacklistInverted");
+
+        LogConsole.info("Used config: " + useCustomSpawnBlacklistInverted + " and the blacklist invert is " + isSpawnBlacklistInverted + " in " + world.getName(), LogConsole.logTypes.debug);
         LogConsole.info("Used config: " + useCustomBlacklistedMaterials + " and the values are : " + worldBlacklistedMaterials, LogConsole.logTypes.debug);
 
         while (true) {
             int x = xmin + ThreadLocalRandom.current().nextInt((xmax - xmin) + 1);
             int z = zmin + ThreadLocalRandom.current().nextInt((zmax - zmin) + 1);
             int y = world.getHighestBlockYAt(x, z);
+
+            tryCount++;
 
             Location location = new Location(world, x, y, z);
 
@@ -249,8 +247,15 @@ public class Spawn implements Listener {
                 location = location.subtract(0, 1, 0);
             }
 
-            if (worldBlacklistedMaterials.contains(location.getBlock().getType())) {
-                continue;
+            if(!isSpawnBlacklistInverted) {
+                if (worldBlacklistedMaterials.contains(location.getBlock().getType())) {
+                 continue;
+                }
+            }
+            else {
+                if (!worldBlacklistedMaterials.contains(location.getBlock().getType())) {
+                    continue;
+                }
             }
 
             return location.add(0.5d, 1d, 0.5d);
