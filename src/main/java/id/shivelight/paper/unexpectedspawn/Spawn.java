@@ -41,16 +41,6 @@ public class Spawn implements Listener {
     Spawn(UnexpectedSpawn plugin) {
         this.plugin = plugin;
 
-//        List<String> materialList = plugin.config.getConfig().getStringList("global.spawn-block-blacklist");
-//        for (String name : materialList) {
-//            Material material = Material.getMaterial(name);
-//            if (material == null) {
-//                Bukkit.getLogger().warning("Material " + name + " is not valid. See https://papermc.io/javadocs/paper/org/bukkit/Material.html");
-//                continue;
-//            }
-//            blacklistedMaterial.add(material);
-//        }
-
         List<String> worldList = plugin.config.getConfig().getStringList("blacklisted-worlds");
         for (String name : worldList) {
             World world = Bukkit.getWorld(name);
@@ -72,13 +62,14 @@ public class Spawn implements Listener {
         deathWorld = event.getEntity().getWorld();
         deadPlayer = event.getEntity();
         deathLocation = deadPlayer.getLocation();
-        LogConsole.info("Player " + deadPlayer.getName() + " died at (x"
-                    + deathLocation.getBlockX() + ", y" + deathLocation.getBlockY() + ", z" + deathLocation.getBlockZ() +
+        LogConsole.info("Player " + deadPlayer.getName() + " died at (X "
+                    + deathLocation.getBlockX() + ", Y " + deathLocation.getBlockY() + ", Z " + deathLocation.getBlockZ() +
                     ") at world (" + deathWorld.getName() + ").", LogConsole.logTypes.debug);
 
         if (deadPlayer != null && deadPlayer.hasPermission("unexpectedspawn.notify")) {
-            String msg = "Your death location (&4x%s&r, &2y%s&r, &1z%s&r) in world (%s).";
-            deadPlayer.sendMessage(String.format(msg, deathLocation.getBlockX(), deathLocation.getBlockY(), deathLocation.getBlockZ(), deathWorld.getName()));
+            String msg = String.format("Your death location (&4X %s&r, &2Y %s&r, &1Z %s&r) in world (%s).", deathLocation.getBlockX(), deathLocation.getBlockY(), deathLocation.getBlockZ(), deathWorld.getName());
+            String out = ChatColor.translateAlternateColorCodes('&', msg);
+            deadPlayer.sendMessage(out);
         }
     }
 
@@ -183,7 +174,7 @@ public class Spawn implements Listener {
 
 
     private String checkWorldConfig(World world, String config) {
-        List<String> worldList = plugin.config.getConfig().getStringList("worlds");
+        //List<String> worldList = plugin.config.getConfig().getStringList("worlds");
         String worldName = world.getName();
         if (plugin.config.getConfig().contains("worlds." + worldName + "." + config)) {
             return ("worlds." + worldName + ".");
@@ -207,17 +198,32 @@ public class Spawn implements Listener {
         return blacklistedMaterial;
     }
 
+    public static int AddFailRange(int previous, int rangetoadd) {
+        int result = 0;
+        int valtype = Integer.signum(previous);
+
+        if (valtype == 0 || valtype == 1){
+            result = previous + rangetoadd;
+        }
+        else {
+            result = previous - rangetoadd;
+        }
+        return result;
+    }
+
     private Location getRandomSpawnLocation(World world) {
         int tryCount = 0;
         String useCustomMinX = checkWorldConfig(world, "x-min");
         String useCustomMaxX = checkWorldConfig(world, "x-max");
         String useCustomMinZ = checkWorldConfig(world, "z-min");
         String useCustomMaxZ = checkWorldConfig(world, "z-max");
+        String useCustomRetryOnFail = checkWorldConfig(world, "fail-radius");
 
         int xmin = plugin.config.getConfig().getInt(useCustomMinX + "x-min");
         int xmax = plugin.config.getConfig().getInt(useCustomMaxX + "x-max");
         int zmin = plugin.config.getConfig().getInt(useCustomMinZ + "z-min");
         int zmax = plugin.config.getConfig().getInt(useCustomMaxZ + "z-max");
+        int retryonfail = plugin.config.getConfig().getInt(useCustomRetryOnFail + "fail-radius");
 
 
         LogConsole.info("Used config: " + useCustomMinX + " for random respawn area and the values are ("+xmin+","+xmax+","+zmin+","+zmax+").", LogConsole.logTypes.debug);
@@ -227,12 +233,28 @@ public class Spawn implements Listener {
         HashSet<Material> worldBlacklistedMaterials = getBlacklistedMaterials(useCustomBlacklistedMaterials);
 
         String useCustomSpawnBlacklistInverted = checkWorldConfig(world, "invert-block-blacklist");
-        boolean isSpawnBlacklistInverted = plugin.config.getConfig().getBoolean(useCustomSpawnBlacklistInverted + "isSpawnBlacklistInverted");
+        boolean isSpawnBlacklistInverted = plugin.config.getConfig().getBoolean(useCustomSpawnBlacklistInverted + "invert-block-blacklist");
 
         LogConsole.info("Used config: " + useCustomSpawnBlacklistInverted + " and the blacklist invert is " + isSpawnBlacklistInverted + " in " + world.getName(), LogConsole.logTypes.debug);
         LogConsole.info("Used config: " + useCustomBlacklistedMaterials + " and the values are : " + worldBlacklistedMaterials, LogConsole.logTypes.debug);
 
         while (true) {
+
+            if(tryCount == 5000) {
+                xmin = AddFailRange(xmin ,retryonfail);
+                xmax = AddFailRange(xmax ,retryonfail);
+                zmin = AddFailRange(zmin ,retryonfail);
+                zmax = AddFailRange(zmax ,retryonfail);
+                LogConsole.warn("Couldn't find suitable location after "+tryCount+" try. Updating range as per fail-radius.", LogConsole.logTypes.log);
+                LogConsole.info("Used config: " + useCustomRetryOnFail + " for retry fail radius ("+retryonfail+") so the current values are ("+xmin+","+xmax+","+zmin+","+zmax+").", LogConsole.logTypes.debug);
+            }
+            else if (tryCount >= 10000) {
+                LogConsole.warn("Couldn't find suitable location for random respawn after "+tryCount+" so respawning at world spawn point.", LogConsole.logTypes.log);
+                Location location = world.getSpawnLocation();
+                //Location location = new Location(world,0,world.getHighestBlockYAt(0, 0),0);
+                return location.add(0.5d, 1d, 0.5d);
+            }
+
             int x = xmin + ThreadLocalRandom.current().nextInt((xmax - xmin) + 1);
             int z = zmin + ThreadLocalRandom.current().nextInt((zmax - zmin) + 1);
             int y = world.getHighestBlockYAt(x, z);
@@ -241,7 +263,7 @@ public class Spawn implements Listener {
 
             Location location = new Location(world, x, y, z);
 
-            // Special case for server version <1.15.2 (?)
+            // Special case for server version < 1.15.2 (?)
             // Related: https://www.spigotmc.org/threads/gethighestblockat-returns-air.434090/
             if (location.getBlock().getType() == Material.AIR) {
                 location = location.subtract(0, 1, 0);
@@ -257,6 +279,8 @@ public class Spawn implements Listener {
                     continue;
                 }
             }
+
+            LogConsole.warn("Found location for random respawn after "+tryCount+" (X "+x+", Y "+y+", Z "+z+")", LogConsole.logTypes.log);
 
             return location.add(0.5d, 1d, 0.5d);
         }
