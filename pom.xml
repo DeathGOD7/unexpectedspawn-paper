@@ -6,7 +6,7 @@
 
     <groupId>id.shivelight.paper</groupId>
     <artifactId>unexpectedspawn</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1-beta</version>
     <packaging>jar</packaging>
 
     <name>UnexpectedSpawn</name>
@@ -63,10 +63,16 @@
     </repositories>
 
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>com.destroystokyo.paper</groupId>-->
+<!--            <artifactId>paper-api</artifactId>-->
+<!--            <version>1.16.5-R0.1-SNAPSHOT</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
+            <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

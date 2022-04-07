@@ -44,13 +44,17 @@ If you still have issues, please send it in Issues tab rather than sending it in
 ## Additional Permissions
 
 - unexpectedspawn.use
-  (Allows user to do /uns reload) Default : OP
+(Allows user to do /uns reload)
+Default : OP
 
 - unexpectedspawn.notify
-  (Notifies user about their death location) Default : OP
+(Notifies user about their death location)
+Default : OP
 
 - unexpectedspawn.bypass
-  (Bypasses the random respawn or random join checks. Uses vanilla method) Default : OP
+(Bypasses the random respawn or random join checks. Uses vanilla method)
+Default : OP
+
 
 ## Configuration
 

@@ -8,7 +8,10 @@ global:
   z-max: 399
   z-min: -399
 
-  #Sets the global respawn world unless set in custom config worlds.
+  # Fail radius expansion if normal x and z area failed to obtain suitable block or location
+  fail-radius: 500
+
+  # Sets the global respawn world unless set in custom config worlds.
   respawn-world: 'world'
 
   # Do you want to have random respawn than normal world respawn? By default it is enabled in all worlds. If you want to
@@ -25,6 +28,9 @@ global:
     on-first-join: false
     # Enable this if you want to have random respawn each time user joins the server. It's best for Anarchy type server.
     always-on-join: false
+
+  # Invert the blacklist to whitelist
+  invert-block-blacklist: false
 
   # Specify any block where you don't want user to be teleported. You don't them to drown in lava/water or land on
   # someone else campfire, no?
@@ -51,6 +57,7 @@ worlds: []
 #    x-min: -500
 #    z-max: 500
 #    z-min: -500
+#    fail-radius: 1000
 #    respawn-world: ''
 #    random-respawn:
 #      on-death: true
