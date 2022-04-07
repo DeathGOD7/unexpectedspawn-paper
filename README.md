@@ -12,22 +12,21 @@ Simple plugin to randomize any player spawn point. Suitable for Hardcore / Anarc
 
 [Discord](https://discord.gg/7wqnERhG9f) | [Spigot](https://www.spigotmc.org/resources/unexpectedspawn-randomize-player-spawn.32601/)
 
-Things that were added : 
-- Global values for world that don't have custom config
-- Toggle switch for random respawn on death
-- Fixed the config keys, so it doesn't make plugin users confused
-- Added per world config settings
-- Added per world respawn world
-- Added option to toggle debug mode, which will be helpful for debugging bugs and identifying errors
-- Added 2 new permission nodes
+## Changelog (v0.3.1)
+[New Feature]
+- added failure radius with customizable feature (currently limited the numbers of tries to 5000 minimum before it adds failure radius / not customizable yet)
+- added invert spawn blacklist (as requested by haha44444)
+  ( also this may cause error if only 5-10 block are there in 400x400 area of spawn area and it will continue to look for that blocks infinite. so to fix that added failure radius and specified point where it will use the failure radius in search . and also added upper limit (10,000 tries) for random spawn searcher where player will be teleported to spawn point of world.)
 
-Bugs Fixed :
-- Fixed error when coming back to overworld from end
-- Fixed the nether issue that it used to respawn in same world if there is no world specified in global config
-  (Rather it's config missing respawn world in global keys. So added default respawn world for global config to be "world".)
+[Bug Fix/Update]
+- fixed/removed the adventure native chat formatter as it wasn't used much. Added ChatColor (legacy method. supposed to work in all Minecraft versions)
+- updated paper API to 1.18.1 (1.18.1-R0.1-SNAPSHOT) to use all blocks of latest 1.17 and 1.18 update (so the group id is updated from com.destroystokyo.paper to io.papermc.paper )
+- added more debugger to plugin so its easier to debug when error comes up.
+
+**Note : You need to remove old config for new one to be generated. It is recommended to make backup of old config file before updating.**
 
 
-## Minor Bug
+## Minor Bug (Prior to old versions)
 You will respawn in the spawn point of Nether world if you are using the old version of Multiverse 4.2.2 and below and running a 1.16+ server.
 To fix that just use the latest build or v4.3.0 or higher where multiverse fixed that issue.
 
@@ -69,7 +68,10 @@ global:
   z-max: 399
   z-min: -399
 
-  #Sets the global respawn world unless set in custom config worlds.
+  # Fail radius expansion if normal x and z area failed to obtain suitable block or location
+  fail-radius: 500
+
+  # Sets the global respawn world unless set in custom config worlds.
   respawn-world: 'world'
 
   # Do you want to have random respawn than normal world respawn? By default it is enabled in all worlds. If you want to
@@ -86,6 +88,9 @@ global:
     on-first-join: false
     # Enable this if you want to have random respawn each time user joins the server. It's best for Anarchy type server.
     always-on-join: false
+
+  # Invert the blacklist to whitelist
+  invert-block-blacklist: false
 
   # Specify any block where you don't want user to be teleported. You don't them to drown in lava/water or land on
   # someone else campfire, no?
@@ -112,6 +117,7 @@ worlds: []
 #    x-min: -500
 #    z-max: 500
 #    z-min: -500
+#    fail-radius: 1000
 #    respawn-world: ''
 #    random-respawn:
 #      on-death: true
