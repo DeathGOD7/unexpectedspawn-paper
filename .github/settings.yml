@@ -1,0 +1,113 @@
+# Labels: define labels for Issues and Pull Requests
+labels:
+  - name: api
+    description: This issue or pull request is related to API
+    color: b60205
+  - name: not related
+    description: Not related to us or our plugins/addons
+    color: d93f0b
+  - name: awaiting response
+    description: Waiting for response
+    color: fbca04
+  - name: bug
+    description: This issue or pull request involves bug 
+    color: d73a4a
+  - name: can reproduce
+    description: This issue or pull request is reproducible
+    color: 4d5e94
+  - name: "can't reproduce"
+    description: This issue or pull request is not reproducible
+    color: d93f0b
+  - name: database
+    description: This issue or pull request is related to database
+    color: 0052cc
+  - name: dependencies
+    description: This issue or pull request is related to a dependency file
+    color: 0366d6
+  - name: devOps
+    description: This issue or pull request is related to devOps
+    color: 0c4f20
+  - name: discord
+    description: This issue or PR is related to Discord/API
+    color: 7289da
+  - name: discussion
+    description: This issue or pull request is currently under discussion
+    color: 7108c2
+  - name: documentation
+    description: This issue or pull request is related to improvements or additions to documentation
+    color: 0075ca
+  - name: duplicate
+    description: This issue or pull request already exists
+    color: cfd3d7
+  - name: enhancement
+    description: This issue or pull request is for new feature or request
+    color: a2eeef
+  - name: good first issue
+    description: Good for newcomers
+    color: 7057ff
+  - name: has PR
+    description: This issue has a pull request
+    color: d4c5f9
+  - name: help wanted
+    description: This issue or pull request needs extra attention
+    color: "008672"
+  - name: invalid
+    description: "This issue or pull request contains invalid things which doesn't seem right"
+    color: e4e669
+  - name: needs triage
+    description: This issue or pull request is yet to be reproduced
+    color: 0052cc
+  - name: performance
+    description: This issue or pull request is related to performance
+    color: 006b75
+  - name: "priority: severe"
+    description: Code breaking bugs and codes! Immediate action needed
+    color: b60205
+  - name: "priority: high"
+    description: Tasks with high priority! Needs to be completed immediately
+    color: d93f0b
+  - name: "priority: low"
+    description: Tasks with low priority
+    color: fbca04
+  - name: "priority: medium"
+    description: Tasks with medium priority! Not urgent, but better to resolve ASAP!
+    color: "5319e7"
+  - name: question
+    description: This issue or pull request requests further information
+    color: d876e3
+  - name: "semver: major"
+    description: Incompatible API changes
+    color: b60205
+  - name: "semver: minor"
+    description: New functionality; backward compatibility manner
+    color: d93f0b
+  - name: "semver: patch"
+    description: Backward compatible bug fixes
+    color: fbca04
+  - name: solved
+    description: This issue or pull request is solved
+    color: 0e8a16
+  - name: "status: pending"
+    description: This issue or pull request is yet to be reviewed
+    color: da2e71
+  - name: "status: in progress"
+    description: This issue or pull request review is in progress
+    color: 006b75
+  - name: "status: in review"
+    description: This issue or pull request is currently being reviewed
+    color: aae128
+  - name: "status: stale"
+    description: This issue or pull request is Stale
+    color: f9d0c4
+  - name: "status: approved"
+    description: This issue or pull request is approved
+    color: 0e8a16
+  - name: "status: declined"
+    description: This issue or pull request is declined
+    color: b60205
+  - name: translation
+    description: This issue or pull request is related to translations
+    color: dd79b4
+  - name: "won't fix"
+    description: This issue or pull request will not be worked on
+    color: ffffff
