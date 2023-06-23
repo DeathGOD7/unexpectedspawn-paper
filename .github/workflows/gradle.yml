@@ -40,5 +40,5 @@ jobs:
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: MultiCurrency-SNAPSHOT
+          name: UnexpectedSpawn-SNAPSHOT
           path: ${{ github.workspace }}/build/libs/*.jar
