@@ -1,5 +1,5 @@
 name: UnexpectedSpawn
-version: ${project.version}
+version: ${version}
 main: id.shivelight.paper.unexpectedspawn.UnexpectedSpawn
 api-version: 1.13
 authors: [Shivelight, DeathGOD7]
