@@ -8,7 +8,7 @@ version = '0.3.1'
 description = 'UnexpectedSpawn'
 
 
-def targetJavaVersion = 17
+def targetJavaVersion = 8
 
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
@@ -33,7 +33,8 @@ repositories {
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
+    compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT' //for java 8 support
+    //compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
 }
 
 
