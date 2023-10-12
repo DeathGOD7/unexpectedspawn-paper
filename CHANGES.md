@@ -6,10 +6,11 @@
 
 [Bug Fix/Update]
 - Firstly, changed from original package name to new one since Shivelight domain was down. ("id.shivelight.paper.unexpectedspawn" is now "com.github.deathgod7.unexpectedspawn")
-- Secondly, rewrote the codes to be clean and nice...  (Moved bunch of stuff from events class to utils class)
+- Secondly, rewrote the codes to be clean and nice...  (Moved a bunch of stuff from events class to utils class)
 - Thirdly, bumped version from 0.3.1 => 1.0.0 (First major version release as its stable enough) and we will be following the SemVer version style
 - Migrated the Reload.java class to new MainCommand.java and added CommandHandler.java to make it easy to add more commands in future if needed
 - Migrated the Spawn.java class to new EventHandler.java as a part of making it "nice"
+- Random respawn in Nether works correctly for both the respawn/join event and the rtp command now.
 - And some humor in debug logs as well as minor license info changes
 
 **[Note] Only "version:x.y.z" is added in config. So no need to re-generate config file.** *(you can manually add it by copy-pasting from below)*
