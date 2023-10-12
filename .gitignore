@@ -118,8 +118,7 @@ buildNumber.properties
 .flattened-pom.xml
 
 # Gradle
-.gradle
-/
+.gradle/
 build/
 
 

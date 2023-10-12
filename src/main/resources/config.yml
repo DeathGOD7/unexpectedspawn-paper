@@ -1,5 +1,6 @@
 # UnexpectedSpawn
-# Authors : Shivelight, DeathGOD7
+# Authors : DeathGOD7, Shivelight
+version: '1.0.0'
 
 global:
   # Random respawn area for global settings.

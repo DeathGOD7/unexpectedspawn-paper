@@ -1,8 +1,8 @@
 /*
  * This file is part of UnexpectedSpawn 
- * (see https://github.com/Shivelight/unexpectedspawn-paper).
+ * (see https://github.com/DeathGOD7/unexpectedspawn-paper).
  *
- * Copyright (c) 2019 Shivelight.
+ * Copyright (c) 2023 DeathGOD7, Shivelight
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package id.shivelight.paper.unexpectedspawn;
+package com.github.deathgod7.unexpectedspawn;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

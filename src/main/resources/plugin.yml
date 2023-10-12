@@ -1,24 +1,38 @@
 name: UnexpectedSpawn
 version: ${version}
-main: id.shivelight.paper.unexpectedspawn.UnexpectedSpawn
+main: com.github.deathgod7.unexpectedspawn.UnexpectedSpawn
 api-version: 1.13
-authors: [Shivelight, DeathGOD7]
+authors: [DeathGOD7, Shivelight]
 description: Randomize player spawn point.
 prefix: UnexpectedSpawn
-website: https://shivelight.id
+website: https://github.com/DeathGOD7/unexpectedspawn-paper
 softdepend: [Multiverse-Core]
+
 commands:
   unexpectedspawn:
-    usage: /<command> reload
-    description: Reload UnexpectedSpawn.
-    aliases: uns
+    usage: |
+      Use /<command> help [subcommand] for more information
+      /<command> help
+      /<command> randomtp
+      /<command> reload
+    description: Gives info about UnexpectedSpawn
+    aliases:
+      - uns
+    permission: unexpectedspawn.use
+
 permissions:
-  unexpectedspawn.use:
-    description: Use UnexpectedSpawn command.
+  unexpectedspawn.use.*:
+    description: Use UnexpectedSpawn command
     default: op
+    children:
+      unexpectedspawn.use: true
+      unexpectedspawn.use.reload: true
+      unexpectedspawn.use.randomtp: true
+
   unexpectedspawn.notify:
-    description: Get notified about your death location.
+    description: Get notified about your death location
     default: op
+
   unexpectedspawn.bypass:
-    description: Bypass random respawn.
+    description: Bypass random respawn
     default: op

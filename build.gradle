@@ -3,8 +3,8 @@ plugins {
     id 'maven-publish'
 }
 
-group = 'id.shivelight.paper'
-version = '0.3.1'
+group = 'com.github.deathgod7'
+version = '1.0.0'
 description = 'UnexpectedSpawn'
 
 

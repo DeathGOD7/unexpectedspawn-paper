@@ -1,4 +1,4 @@
-package id.shivelight.paper.unexpectedspawn;
+package com.github.deathgod7.unexpectedspawn;
 
 import java.util.HashMap;
 
