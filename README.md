@@ -20,15 +20,15 @@ Simple plugin to randomize any player spawn point. Suitable for Hardcore / Anarc
 
 ## Changelog (v1.0.0)
 [New Feature]
-- Added 2 more permissions node ("unexpectedspawn.use.reload" and "unexpectedspawn.use.randomtp")
-- Added permission to default command in plugin.yml so normal players won't access tab-complete commands if they don't have required permission
+- Added 2 more permissions nodes ("unexpectedspawn.use.reload" and "unexpectedspawn.use.randomtp")
+- Added permission to default command in plugin.yml so normal players won't access tab-complete commands if they don't have the required permission
 - Added 2 more commands "/uns help \<subcommand>" and "/uns randomtp \<args>"
 
 [Bug Fix/Update]
-- Firstly, changed from original package name to new one since Shivelight domain was down. ("id.shivelight.paper.unexpectedspawn" is now "com.github.deathgod7.unexpectedspawn")
+- Firstly, changed from the original package name to the new one since Shivelight domain was down. ("id.shivelight.paper.unexpectedspawn" is now "com.github.deathgod7.unexpectedspawn")
 - Secondly, rewrote the codes to be clean and nice...  (Moved a bunch of stuff from events class to utils class)
-- Thirdly, bumped version from 0.3.1 => 1.0.0 (First major version release as its stable enough) and we will be following the SemVer version style
-- Migrated the Reload.java class to new MainCommand.java and added CommandHandler.java to make it easy to add more commands in future if needed
+- Thirdly, bumped the version from 0.3.1 => 1.0.0 (The first major version release as it's stable enough) and we will be following the SemVer version style
+- Migrated the Reload.java class to new MainCommand.java and added CommandHandler.java to make it easy to add more commands in the future if needed
 - Migrated the Spawn.java class to new EventHandler.java as a part of making it "nice"
 - Random respawn in Nether works correctly for both the respawn/join event and the rtp command now.
 - And some humor in debug logs as well as minor license info changes
@@ -71,6 +71,8 @@ If you still have issues, please send it in Issues tab rather than sending it in
 
 
 ## Configuration
+<details>
+<summary>config.yml</summary>
 
 ```yaml
 # UnexpectedSpawn
@@ -150,6 +152,7 @@ blacklisted-worlds: []
 
 debug : false
 ```
+</details>
 
 ## Contributors
 - DeathGOD7
