@@ -20,30 +20,18 @@
 
 package com.github.deathgod7.unexpectedspawn;
 
-import java.util.HashMap;
+public class CommandsHandler {
+	UnexpectedSpawn plugin;
 
-public class ApiUtil {
+	public CommandsHandler(UnexpectedSpawn instance) {
+		this.plugin = instance;
+	}
 
-    private static final HashMap<String, Boolean> availableApiCache = new HashMap<>();
-
-    public static boolean isAvailable(Class<?> klass, String methodName) {
-        String method = klass.getName() + "#" + methodName;
-        if (availableApiCache.containsKey(method)) {
-            return availableApiCache.get(method);
-        }
-
-        try {
-            klass.getMethod(methodName);
-            availableApiCache.put(method, true);
-        } catch (NoSuchMethodException e) {
-            availableApiCache.put(method, false);
-        }
-
-        return availableApiCache.get(method);
-    }
-
-    public static void clearCache() {
-        availableApiCache.clear();
-    }
+	public void RegisterCommands(){
+		// main command "/unexpectedspawn"
+		this.plugin.getCommand("unexpectedspawn").setExecutor(new MainCommand(this.plugin));
+	}
 
 }
+
+

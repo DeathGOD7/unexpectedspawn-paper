@@ -1,6 +1,5 @@
 # UnexpectedSpawn
 # Authors : DeathGOD7, Shivelight
-version: '1.0.0'
 
 global:
   # Random respawn area for global settings.
@@ -9,13 +8,16 @@ global:
   z-max: 399
   z-min: -399
 
+  # Amount of invulnerable after random teleport (works for both command and random respawn) Default : 5 Seconds
+  invulnerable-duration: 5
+
   # Fail radius expansion if normal x and z area failed to obtain suitable block or location
   fail-radius: 500
 
   # Sets the global respawn world unless set in custom config worlds.
   respawn-world: 'world'
 
-  # Do you want to have random respawn than normal world respawn? By default it is enabled in all worlds. If you want to
+  # Do you want to have random respawn than normal world respawn? By default, it is enabled in all worlds. If you want to
   # disable it in specific world, then add that world name in below 'blacklisted-worlds'.
   random-respawn:
     # Do you want to have random respawn after user dies? If set to false then user will respawn in world spawnpoint.
@@ -30,7 +32,7 @@ global:
     # Enable this if you want to have random respawn each time user joins the server. It's best for Anarchy type server.
     always-on-join: false
 
-  # Invert the blacklist to whitelist
+  # Invert the blacklist below to whitelist
   invert-block-blacklist: false
 
   # Specify any block where you don't want user to be teleported. You don't them to drown in lava/water or land on
@@ -58,6 +60,7 @@ worlds: []
 #    x-min: -500
 #    z-max: 500
 #    z-min: -500
+#    invulnerable-duration: 3
 #    fail-radius: 1000
 #    respawn-world: ''
 #    random-respawn:
@@ -66,11 +69,12 @@ worlds: []
 #      on-first-join: false
 #      always-on-join: false
 
-# If you have any worlds here , then it will be excluded from having random spawn
-# Even if you have set custom settings in above settings and you add that world to
-# blacklist, it will be excluded. Default :[]
+# If you have any worlds here, then it will be excluded from having random spawn
+# Even if you have set custom settings in above settings, and you add that world to
+# blacklist, it will be excluded. Default :[] (to disable)
 blacklisted-worlds: []
 #  - bedwars
 #  - creative
 
+# Debug Mode, for debugging the plugin and show some useful information.
 debug : false

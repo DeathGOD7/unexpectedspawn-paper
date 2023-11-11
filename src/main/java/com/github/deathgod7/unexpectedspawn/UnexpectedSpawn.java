@@ -22,6 +22,9 @@ package com.github.deathgod7.unexpectedspawn;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashSet;
+import java.util.UUID;
+
 public final class UnexpectedSpawn extends JavaPlugin {
 
     private static UnexpectedSpawn _instance;
@@ -29,11 +32,14 @@ public final class UnexpectedSpawn extends JavaPlugin {
         return _instance;
     }
     ConfigAccessor config;
-    CommandHandler commandHandler;
+    CommandsHandler commandHandler;
+
+    HashSet<UUID> preventDmg;
 
     @Override
     public void onEnable() {
         _instance = this;
+		preventDmg = new HashSet<>();
         // load default config
         this.config = new ConfigAccessor(this, "config.yml");
         this.config.getConfig().options().copyDefaults(true);
@@ -41,16 +47,12 @@ public final class UnexpectedSpawn extends JavaPlugin {
         // save default config to file
         this.config.saveDefaultConfig();
 
-        if (this.config.getConfig().contains("version")) {
-            this.config.getConfig().set("version", this.getDescription().getVersion());
-        }
-
         // register commands
-        this.commandHandler = new CommandHandler(this);
+        this.commandHandler = new CommandsHandler(this);
         this.commandHandler.RegisterCommands();
 
         // register events
-        getServer().getPluginManager().registerEvents(new EventHandler(this), this);
+        getServer().getPluginManager().registerEvents(new EventsHandler(this), this);
     }
 
 }

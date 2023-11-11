@@ -20,12 +20,9 @@
 
 package com.github.deathgod7.unexpectedspawn;
 
-import com.github.deathgod7.unexpectedspawn.UnexpectedSpawn;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -40,6 +37,7 @@ public class Utils {
 		XMax("x-max"),
 		ZMin("z-min"),
 		ZMax("z-max"),
+		InvulnerableTime("invulnerable-duration"),
 		FailRadius("fail-radius"),
 		RespawnWorld("respawn-world"),
 		BlackListMaterials("spawn-block-blacklist"),
@@ -366,5 +364,25 @@ public class Utils {
 	}
 
 
+	public static void addInvulnerable(Player player, World world) {
+		// add player UUID to check for preventing damage
+		if (plugin.preventDmg.add(player.getUniqueId())) {
+			LogConsole.warn("Player " + player.getName() + " will now turn into immortal peasant.", LogConsole.logTypes.debug);
+		}
+
+		// start timer for invulnerable
+		ConfigVariable label = ConfigVariable.InvulnerableTime;
+		String custom = checkWorldConfig(world, label.configstring);
+		int sec = plugin.config.getConfig().getInt(custom + label.configstring);
+		Bukkit.getScheduler().runTaskLater(plugin, () -> {
+			LogConsole.warn("Prevent DMG (List) : " + plugin.preventDmg.toString(), LogConsole.logTypes.debug);
+			// remove player UUID after if no fall damage after 5s of teleport
+			if (plugin.preventDmg.contains(player.getUniqueId())) {
+				plugin.preventDmg.remove(player.getUniqueId());
+				LogConsole.warn("Player " + player.getName() + " will now turn into mortal servant.", LogConsole.logTypes.debug);
+			}
+		}, sec * 20L);
+
+	}
 
 }

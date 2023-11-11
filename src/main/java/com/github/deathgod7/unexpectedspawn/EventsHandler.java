@@ -22,7 +22,9 @@ package com.github.deathgod7.unexpectedspawn;
 
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -32,13 +34,13 @@ import java.util.List;
 
 import static com.github.deathgod7.unexpectedspawn.Utils.*;
 
-public class EventHandler implements Listener {
+public class EventsHandler implements Listener {
 	
 	private final UnexpectedSpawn plugin;
 	private final HashSet<Material> blacklistedMaterial = new HashSet<>();
 	private final HashSet<World> blacklistedWorlds = new HashSet<>();
 	
-	public EventHandler(UnexpectedSpawn plugin) {
+	public EventsHandler(UnexpectedSpawn plugin) {
 		this.plugin = plugin;
 		
 		List<String> worldList = plugin.config.getConfig().getStringList("blacklisted-worlds");
@@ -57,7 +59,7 @@ public class EventHandler implements Listener {
 	Location deathLocation;
 	
 	
-	@org.bukkit.event.EventHandler
+	@EventHandler
 	public void onDeath(PlayerDeathEvent event){
 		deathWorld = event.getEntity().getWorld();
 		deadPlayer = event.getEntity();
@@ -73,7 +75,7 @@ public class EventHandler implements Listener {
 		}
 	}
 	
-	@org.bukkit.event.EventHandler
+	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		World joinWorld = event.getPlayer().getWorld();
 		
@@ -101,10 +103,12 @@ public class EventHandler implements Listener {
 				|| plugin.config.getConfig().getBoolean(useCustomAlwaysOnJoin + "random-respawn.always-on-join")) {
 			Location joinLocation = getRandomSpawnLocation(joinWorld);
 			event.getPlayer().teleport(joinLocation);
+			// add invulnerable to the player
+			addInvulnerable(event.getPlayer(), joinWorld);
 		}
 	}
 	
-	@org.bukkit.event.EventHandler
+	@EventHandler
 	public void onRespawn(PlayerRespawnEvent event) {
 		World respawnWorld = event.getRespawnLocation().getWorld();
 		String wName = respawnWorld.getName();
@@ -168,9 +172,21 @@ public class EventHandler implements Listener {
 			if (!event.isBedSpawn() || !plugin.config.getConfig().getBoolean(useCustomBedRespawn + "random-respawn.bed-respawn-enabled")) {
 				Location respawnLocation = getRandomSpawnLocation(respawnWorld);
 				event.setRespawnLocation(respawnLocation);
+				// add invulnerable to the player
+				addInvulnerable(event.getPlayer(), respawnWorld);
 			}
 		}
 	}
 	
-	
+	@EventHandler
+	public void onDamange(EntityDamageEvent event) {
+		if (event.getEntity() instanceof Player
+			&& plugin.preventDmg.contains(event.getEntity().getUniqueId())
+		) {
+			LogConsole.warn("Player " + event.getEntity().getName() + " was going to take damamge after teleporting.", LogConsole.logTypes.debug);
+			event.setCancelled(true);
+			LogConsole.warn("Canceling damage done to player " + event.getEntity().getName() + ".", LogConsole.logTypes.debug);
+		}
+	}
+
 }

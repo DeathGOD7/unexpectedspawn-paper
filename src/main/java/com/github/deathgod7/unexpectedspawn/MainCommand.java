@@ -20,6 +20,7 @@
 
 package com.github.deathgod7.unexpectedspawn;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -40,7 +41,7 @@ import static com.github.deathgod7.unexpectedspawn.Utils.*;
 public class MainCommand implements CommandExecutor, TabCompleter {
     UnexpectedSpawn plugin;
 
-    MainCommand(UnexpectedSpawn plugin) {
+    public MainCommand(UnexpectedSpawn plugin) {
         this.plugin = plugin;
     }
 
@@ -207,12 +208,15 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
 			// teleport user to it
 			player.teleport(randomLocation);
-			LogConsole.warn("Player has been thrown at random place to be tarnished and become maidenless!", LogConsole.logTypes.debug);
-			sender.sendMessage("Player has been teleported randomly!");
+			LogConsole.warn("Player " + player.getName() + " has been thrown at random place to be tarnished and become maidenless!", LogConsole.logTypes.debug);
+			sender.sendMessage("Player " + player.getName() + " has been teleported randomly!");
+
+			// add invulnerable to the player
+			addInvulnerable(player, world);
 
 		}
 
-		// if no perms just default to nothing or after it finishes the whole code
+		// if no perms just default to nothing, or after it finishes the whole code
         return  true;
 
     }
