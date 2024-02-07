@@ -20,11 +20,12 @@ global:
   # Do you want to have random respawn than normal world respawn? By default, it is enabled in all worlds. If you want to
   # disable it in specific world, then add that world name in below 'blacklisted-worlds'.
   random-respawn:
-    # Do you want to have random respawn after user dies? If set to false then user will respawn in world spawnpoint.
-    # or bed/respawn anchor spawnpoint.
+    # Do you want to have random respawn after user dies? If set to false then user will respawn in vanilla method.
     on-death: true
+    # Do you want to have random respawn after user comes from end? If set to false then user will respawn in vanilla method.
+    on-return-from-end: false
     # Checks if bed respawn is taken priority. If set to false then it will force user to random respawn
-    # even if they have bed respawn point when they die.
+    # even if they have bed respawn point.
     bed-respawn-enabled: true
     # Do you want to have random spawn when user joins for first time to prevent grief in spawn chunks? If set to false
     # then user will spawn in default world spawnpoint.
@@ -65,6 +66,7 @@ worlds: []
 #    respawn-world: ''
 #    random-respawn:
 #      on-death: true
+#      on-return-from-end: false
 #      bed-respawn-enabled: true
 #      on-first-join: false
 #      always-on-join: false

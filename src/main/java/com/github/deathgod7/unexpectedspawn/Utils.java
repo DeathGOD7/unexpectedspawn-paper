@@ -184,6 +184,8 @@ public class Utils {
 				return location.add(0.5d, 1d, 0.5d);
 			}
 
+			// check for world border
+
 			int x = xmin + ThreadLocalRandom.current().nextInt((xmax - xmin) + 1);
 			int z = zmin + ThreadLocalRandom.current().nextInt((zmax - zmin) + 1);
 			int y;

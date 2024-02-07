@@ -112,7 +112,8 @@ public class EventsHandler implements Listener {
 	public void onRespawn(PlayerRespawnEvent event) {
 		World respawnWorld = event.getRespawnLocation().getWorld();
 		String wName = respawnWorld.getName();
-		
+		boolean returnFromEnd = false;
+
 		if (event.getPlayer().hasPermission("unexpectedspawn.bypass")) {
 			LogConsole.info("Player " + event.getPlayer().getName()
 					+ " has (unexpectedspawn.bypass) permission. So skipping random respawn.", LogConsole.logTypes.debug);
@@ -150,11 +151,16 @@ public class EventsHandler implements Listener {
 			} else {
 				LogConsole.severe("Respawn World in (" + useCustomWorld + ") cannot be null. Please add empty string to disable it.", LogConsole.logTypes.log);
 			}
+
+			// reset death world
+			LogConsole.info("Resetting the death world.", LogConsole.logTypes.debug);
+			deathWorld = null;
 		}
 		else {
 			LogConsole.info("Using world (" + wName + ") where player will respawn normally. Probably coming back to OVERWORLD from END.", LogConsole.logTypes.debug);
+			returnFromEnd = true;
 		}
-		
+
 		if (blacklistedWorlds.contains(respawnWorld)) {
 			LogConsole.info("User in blacklisted world ("+ respawnWorld +"). So random respawn is disabled.", LogConsole.logTypes.debug);
 			return;
@@ -165,16 +171,21 @@ public class EventsHandler implements Listener {
 		}
 		
 		String useCustomOnDeath = checkWorldConfig(respawnWorld, "random-respawn.on-death");
+		String useCustomOnReturnEND = checkWorldConfig(respawnWorld, "random-respawn.on-return-from-end");
 		String useCustomBedRespawn = checkWorldConfig(respawnWorld, "random-respawn.bed-respawn-enabled");
+
+		if ((!returnFromEnd && !plugin.config.getConfig().getBoolean(useCustomOnDeath + "random-respawn.on-death")) ||
+				(returnFromEnd && !plugin.config.getConfig().getBoolean(useCustomOnReturnEND + "random-respawn.on-return-from-end"))
+		) {
+			return;
+		}
 		
 		
-		if(plugin.config.getConfig().getBoolean(useCustomOnDeath + "random-respawn.on-death")) {
-			if (!event.isBedSpawn() || !plugin.config.getConfig().getBoolean(useCustomBedRespawn + "random-respawn.bed-respawn-enabled")) {
+		if (!event.isBedSpawn() || !plugin.config.getConfig().getBoolean(useCustomBedRespawn + "random-respawn.bed-respawn-enabled")) {
 				Location respawnLocation = getRandomSpawnLocation(respawnWorld);
 				event.setRespawnLocation(respawnLocation);
 				// add invulnerable to the player
 				addInvulnerable(event.getPlayer(), respawnWorld);
-			}
 		}
 	}
 	
