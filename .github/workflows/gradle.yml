@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # makes gradlew executable/runnable (to prevent cannot execute problem)
       - name: Make gradlew executable
@@ -25,20 +25,27 @@ jobs:
 
       # setup JDK 8 for building (for MC 1.8.8)
       - name: Set up JDK 8
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '8'
           distribution: 'temurin'
 
 
-      # to fix the said vulnerability of older version than 2.4.2
+      # Build with newest gradle action
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2.4.2
+        uses: gradle/actions/setup-gradle@v3
         with:
           arguments: build --scan
 
+#      - name: Generate artifact name
+#        id: generate-name
+#        run: |
+#          echo "::set-output name=artifact::${{ github.event.repository.name }}.${{ github.ref_name }}.${{ github.run_id }}.zip"
+
+
+      # Upload the artifacts in build workflow
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: UnexpectedSpawn-SNAPSHOT
+          name: UnexpectedSpawn-SNAPSHOT-${{ github.run_id }}.zip
           path: ${{ github.workspace }}/build/libs/*.jar
