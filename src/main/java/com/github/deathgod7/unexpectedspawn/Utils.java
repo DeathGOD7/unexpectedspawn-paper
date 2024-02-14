@@ -32,6 +32,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Utils {
 	static UnexpectedSpawn plugin = UnexpectedSpawn.getInstance();
 
+	/**
+	 * Enum for config variables
+	 */
 	public enum ConfigVariable {
 		XMin("x-min"),
 		XMax("x-max"),
@@ -74,7 +77,7 @@ public class Utils {
 	 * @return {@link int}
 	 */
 	public static int AddFailRange(int previous, int rangetoadd) {
-		int result = 0;
+		int result;
 		int valtype = Integer.signum(previous);
 
 		if (valtype == 0 || valtype == 1){
@@ -88,7 +91,7 @@ public class Utils {
 
 	/**
 	 * <pre>Gets the area value (eg: XMin, ZMax..etc) from config file based on world. Also used to parse the string nymber from rtp command </pre>
-	 * @param value Used in parsing the string (should be null if want to get value from config)
+	 * @param value Used in parsing the string (should be null if you want to get value from config)
 	 * @param label Label to get value of (eg: XMin, ZMax..etc)
 	 * @param world World to look in config for value
 	 * @return {@link int}
@@ -143,7 +146,7 @@ public class Utils {
 	}
 
 	/**
-	 * Used to colorize string based on '&..' color codes
+	 * Used to colorize string based on '&…' color codes
 	 * @param string The string to colorize
 	 * @return {@link String}
 	 */
@@ -163,56 +166,50 @@ public class Utils {
 		int xmax = getAreaValue(null, ConfigVariable.XMax, world);
 		int zmin = getAreaValue(null, ConfigVariable.ZMin, world);
 		int zmax = getAreaValue(null, ConfigVariable.ZMax, world);
-		int retryonfail = getAreaValue(null, ConfigVariable.FailRadius, world);
 
-		HashSet<Material> spawnBlacklistedMaterials = getBlacklistedMaterials(ConfigVariable.BlackListMaterials, world);
+		return getRandomSpawnLocation(xmin, xmax, zmin, zmax, world);
+	}
 
-		boolean isSpawnBlacklistInverted = getInvertStatus(ConfigVariable.InvertBlock, world);
+	/**
+	 * Gets the area inside world border
+	 * @param value The value to check
+	 * @param center The center of world border
+	 * @param radius The radius of world border
+	 * @param config The config variable to check
+	 * @return {@link int}
+	 */
+	public static int getAreaInsideWB(int value, Location center, double radius, ConfigVariable config) {
+		int result, temp;
 
-		while (true) {
-			if(tryCount == 5000) {
-				xmin = AddFailRange(xmin ,retryonfail);
-				xmax = AddFailRange(xmax ,retryonfail);
-				zmin = AddFailRange(zmin ,retryonfail);
-				zmax = AddFailRange(zmax ,retryonfail);
-				LogConsole.warn("Couldn't find suitable location after " + tryCount + " try. Updating range as per fail-radius.", LogConsole.logTypes.log);
-				LogConsole.info("Updated area with retry fail radius ("+retryonfail+") so the current values are ("+xmin+","+xmax+","+zmin+","+zmax+").", LogConsole.logTypes.debug);
-			}
-			else if (tryCount >= 10000) {
-				LogConsole.warn("Couldn't find suitable location for random respawn after "+tryCount+" so respawning at world spawn point.", LogConsole.logTypes.log);
-				Location location = world.getSpawnLocation();
-				return location.add(0.5d, 1d, 0.5d);
-			}
-
-			// check for world border
-
-			int x = xmin + ThreadLocalRandom.current().nextInt((xmax - xmin) + 1);
-			int z = zmin + ThreadLocalRandom.current().nextInt((zmax - zmin) + 1);
-			int y;
-
-			Location location;
-
-			if (world.getEnvironment().equals(World.Environment.NETHER)) {
-				// for nether
-				int minY = 0;
-				int maxY = 128;
-				location = getLocAtNether(x, z, minY, maxY, world, spawnBlacklistedMaterials, isSpawnBlacklistInverted);
-			}else {
-				// for overworld and normal worlds
-				location = getLocAtNormal(x, z, world, spawnBlacklistedMaterials, isSpawnBlacklistInverted);
-			}
-			tryCount++;
-
-			if (location == null) {
-				continue;
-			}
-
-			y = location.getBlockY();
-
-			LogConsole.warn("Found location for random respawn after "+tryCount+" tries (X "+x+", Y "+y+", Z "+z+")", LogConsole.logTypes.log);
-
-			return location.add(0.5d, 1d, 0.5d);
+		switch (config) {
+			case XMin:
+				temp = (int)(center.getBlockX() - radius);
+				result = Math.max(value, temp);
+				break;
+			case XMax:
+				temp = (int)(center.getBlockX() + radius);
+				result = Math.min(value, temp);
+				break;
+			case ZMin:
+				temp = (int)(center.getBlockZ() - radius);
+				result = Math.max(value, temp);
+				break;
+			case ZMax:
+				temp = (int)(center.getBlockZ() + radius);
+				result = Math.min(value, temp);
+				break;
+			default:
+				LogConsole.warn("Not valid config type : " + config.configstring, LogConsole.logTypes.debug);
+				temp = value;
+				result = value;
+				break;
 		}
+
+		if (temp != value) {
+			LogConsole.warn( config.configstring + " value is outside of world border. Using " + temp + " instead of " + value, LogConsole.logTypes.debug);
+		}
+
+		return result;
 	}
 
 	/**
@@ -247,6 +244,16 @@ public class Utils {
 				Location location = world.getSpawnLocation();
 				return location.add(0.5d, 1d, 0.5d);
 			}
+
+			// get border values
+			WorldBorder border = world.getWorldBorder();
+			double radius = border.getSize() / 2;
+			Location center = border.getCenter();
+
+			xmin = getAreaInsideWB(xmin, center, radius, ConfigVariable.XMin);
+			xmax = getAreaInsideWB(xmax, center, radius, ConfigVariable.XMax);
+			zmin = getAreaInsideWB(zmin, center, radius, ConfigVariable.ZMin);
+			zmax = getAreaInsideWB(zmax, center, radius, ConfigVariable.ZMax);
 
 			int x = xmin + ThreadLocalRandom.current().nextInt((xmax - xmin) + 1);
 			int z = zmin + ThreadLocalRandom.current().nextInt((zmax - zmin) + 1);

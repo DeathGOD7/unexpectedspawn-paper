@@ -37,7 +37,6 @@ import static com.github.deathgod7.unexpectedspawn.Utils.*;
 public class EventsHandler implements Listener {
 	
 	private final UnexpectedSpawn plugin;
-	private final HashSet<Material> blacklistedMaterial = new HashSet<>();
 	private final HashSet<World> blacklistedWorlds = new HashSet<>();
 	
 	public EventsHandler(UnexpectedSpawn plugin) {
@@ -190,7 +189,7 @@ public class EventsHandler implements Listener {
 	}
 	
 	@EventHandler
-	public void onDamange(EntityDamageEvent event) {
+	public void onDamage(EntityDamageEvent event) {
 		if (event.getEntity() instanceof Player
 			&& plugin.preventDmg.contains(event.getEntity().getUniqueId())
 		) {
