@@ -76,7 +76,7 @@ public class Utils {
 	 * @param rangetoadd The number to add (fail radius)
 	 * @return {@link int}
 	 */
-	public static int AddFailRange(int previous, int rangetoadd) {
+	public static int addFailRange(int previous, int rangetoadd) {
 		int result;
 		int valtype = Integer.signum(previous);
 
@@ -146,7 +146,7 @@ public class Utils {
 	}
 
 	/**
-	 * Used to colorize string based on '&…' color codes
+	 * Used to colorize string based on color codes
 	 * @param string The string to colorize
 	 * @return {@link String}
 	 */
@@ -232,10 +232,10 @@ public class Utils {
 
 		while (true) {
 			if(tryCount == 5000) {
-				xmin = AddFailRange(xmin ,retryonfail);
-				xmax = AddFailRange(xmax ,retryonfail);
-				zmin = AddFailRange(zmin ,retryonfail);
-				zmax = AddFailRange(zmax ,retryonfail);
+				xmin = addFailRange(xmin ,retryonfail);
+				xmax = addFailRange(xmax ,retryonfail);
+				zmin = addFailRange(zmin ,retryonfail);
+				zmax = addFailRange(zmax ,retryonfail);
 				LogConsole.warn("Couldn't find suitable location after " + tryCount + " try. Updating range as per fail-radius.", LogConsole.logTypes.log);
 				LogConsole.info("Updated area with retry fail radius ("+retryonfail+") so the current values are ("+xmin+","+xmax+","+zmin+","+zmax+").", LogConsole.logTypes.debug);
 			}
@@ -372,7 +372,11 @@ public class Utils {
 		return null;
 	}
 
-
+	/**
+	 * Adds player to prevent damage list and starts timer for invulnerable
+	 * @param player The player to add to list
+	 * @param world The world to check for config
+	 */
 	public static void addInvulnerable(Player player, World world) {
 		// add player UUID to check for preventing damage
 		if (plugin.preventDmg.add(player.getUniqueId())) {
